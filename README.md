@@ -123,3 +123,52 @@
 | GitHub Id | 作业 1 | 作业 2 | 作业 3 |
 | --------- | ----- | ----- | ------ |
 | Cai1Hsu | 已提交 | 已领取 | 未领取 |
+
+# 仓库中作业信息对应问题及解决方案
+
+当新创建一个作业后，虽然 `LoongsonNeuq.Classroom` 可以通过 Classroom API 获取到所有作业的信息，但是无法与已有的信息对应起来，例如（作业Id）。这主要是因为我们通过作业仓库中的 `.assignment` 文件夹中的配置文件来获取作业信息。因此我们需要获取到作业仓库中的 `.assignment` 文件夹中的配置文件，然后将其与 Classroom API 获取到的信息对应起来。
+
+我们使用这个 API 来解决这个问题：`https://api.github.com/assignments/<CLASSROOM_ASSIGNMENT_ID>`
+
+样例返回：
+
+```json
+{
+  "id": 123456,
+  "public_repo": true,
+  "title": "OS 测试作业",
+  "type": "individual",
+  "invite_link": "https://classroom.github.com/a/123456",
+  "invitations_enabled": true,
+  "slug": "os",
+  "students_are_repo_admins": false,
+  "feedback_pull_requests_enabled": false,
+  "max_teams": null,
+  "max_members": null,
+  "editor": null,
+  "accepted": 2,
+  "submissions": 0,
+  "passing": 0,
+  "language": null,
+  "deadline": null,
+  "classroom": {
+    "id": 123456,
+    "name": "2024 NEUQ 龙芯班",
+    "archived": false,
+    "url": "https://classroom.github.com/classrooms/123456"
+  },
+  "starter_code_repository": {
+    "id": 123456,
+    "name": "2024-neuq-os-AssignmentTemplate",
+    "full_name": "Loongson-neuq/2024-neuq-os-AssignmentTemplate",
+    "html_url": "https://github.com/Loongson-neuq/2024-neuq-os-AssignmentTemplate",
+    "node_id": "123456",
+    "private": false,
+    "default_branch": "master"
+  }
+}
+```
+
+利用`starter_code_repository`中的信息，我们可以获取到本次作业的模板仓库，通过模板仓库，我们就能将作业仓库中的 `.assignment` 文件夹中的配置文件与 Classroom API 获取到的信息对应起来。
+
+这会在每一次运行 `LoongsonNeuq.Classroom` 时行时自动进行，以构建正确的作业提交树形结构。
