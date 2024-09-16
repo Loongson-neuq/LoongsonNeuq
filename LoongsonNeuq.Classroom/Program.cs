@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Headers;
-using LoonsonNeuq.Classroom;
-using LoonsonNeuq.Common;
-using LoonsonNeuq.Common.GitHub;
-using LoonsonNeuq.Common.Auth;
+using LoongsonNeuq.Classroom;
+using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.GitHub;
+using LoongsonNeuq.Common.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;

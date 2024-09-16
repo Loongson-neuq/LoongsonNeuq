@@ -2,9 +2,9 @@ using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Octokit;
-using LoonsonNeuq.Common.GitHub;
+using LoongsonNeuq.Common.GitHub;
 
-namespace LoonsonNeuq.Classroom;
+namespace LoongsonNeuq.Classroom;
 
 public class StudentsTable
 {

@@ -4,19 +4,19 @@
 
 本解决方案包含以下项目：
 
-## [LoonsonNeuq.Common]
+## [LoongsonNeuq.Common]
 
 包含一切必要的**通用**工具类，如 GitHub API，Json 模型类，Auth 等。
 
-## [LoonsonNeuq.ListFormatter]
+## [LoongsonNeuq.ListFormatter]
 
 对 `Loongson-Neuq/index` 仓库中的学生列表进行格式化，确保格式正确且 GitHub Id 有效。
 
-## [LoonsonNeuq.ListFormatter.Tests]
+## [LoongsonNeuq.ListFormatter.Tests]
 
-`LoonsonNeuq.ListFormatter` 项目实现的单元测试项目。
+`LoongsonNeuq.ListFormatter` 项目实现的单元测试项目。
 
-## [LoonsonNeuq.AssignmentSubmit]
+## [LoongsonNeuq.AssignmentSubmit]
 
 作业项目中 CI 使用的提交器，包含一个通用自定义评分器以及作业提交器。详细请查看任意作业仓库中 `.assignment/` 下的 `README.md`。
 
@@ -24,11 +24,11 @@
 
 ## [LoongsonNeuq.Classroom]
 
-利用 `Loongson-Neuq/index` 仓库中的数据构建 Classroom，接收 `LoonsonNeuq.AssignmentSubmit` 提交的作业，进行认证检测，保存，整合以及 markdown 生成。
+利用 `Loongson-Neuq/index` 仓库中的数据构建 Classroom，接收 `LoongsonNeuq.AssignmentSubmit` 提交的作业，进行认证检测，保存，整合以及 markdown 生成。
 
 # 作业提交
 
-当作业仓库的远程仓库收到 commit 时，会触发 CI 流程，CI 流程利用 `LoonsonNeuq.AssignmentSubmit` 运行评分器（可选，根据配置需要），然后整合提交结果。
+当作业仓库的远程仓库收到 commit 时，会触发 CI 流程，CI 流程利用 `LoongsonNeuq.AssignmentSubmit` 运行评分器（可选，根据配置需要），然后整合提交结果。
 
 提交结果是一个 json，包含以下字段：
 
@@ -57,7 +57,7 @@
 
 其中，所有的 Artifacts 都不会完整传递，而是省略了 `https://github.com/user/repo/` 部分，在 `LoongsonNeuq.Classroom` 中会根据提交的仓库地址自动补全。这是为了在一定程度上防止伪造提交。当 `LoongsonNeuq.Classroom` 发现提交的仓库地址与提交的 Artifacts 地址不匹配时，会认为这是一次伪造提交，拒绝处理。
 
-由于 `LoonsonNeuq.AssignmentSubmit` 除了等待 `LoongsonNeuq.Classroom` CI 以外无法确认作业是否会被各种原因拒绝，所以即使 `LoongsonNeuq.AssignmentSubmit` CI 通过，也不代表作业会被接受。当然，为了方便，我们会允许 `LoongsonNeuq.AssignmentSubmit` manual dispatch CI，以便失败时重新提交。
+由于 `LoongsonNeuq.AssignmentSubmit` 除了等待 `LoongsonNeuq.Classroom` CI 以外无法确认作业是否会被各种原因拒绝，所以即使 `LoongsonNeuq.AssignmentSubmit` CI 通过，也不代表作业会被接受。当然，为了方便，我们会允许 `LoongsonNeuq.AssignmentSubmit` manual dispatch CI，以便失败时重新提交。
 
 ## LoongsonNeuq.Classroom 工作流
 
