@@ -20,6 +20,8 @@
 
 作业项目中 CI 使用的提交器，包含一个通用自定义评分器以及作业提交器。详细请查看任意作业仓库中 `.assignment/` 下的 `README.md`。
 
+你可以查看这个模板：[AssignmentTemplate](https://github.com/Loongson-neuq/AssignmentTemplate)
+
 ## [LoongsonNeuq.Classroom]
 
 利用 `Loongson-Neuq/index` 仓库中的数据构建 Classroom，接收 `LoonsonNeuq.AssignmentSubmit` 提交的作业，进行认证检测，保存，整合以及 markdown 生成。
