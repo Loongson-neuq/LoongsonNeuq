@@ -208,7 +208,7 @@ GitHub API 已经全部迁移至由源生成器构建的 SDK，调用风格完�
         "title": "Step 1",
         "timeout": 60,
         "command": "make test",
-        "max_score": 100,
+        "score": 100,
       }
     ]
   }
@@ -250,7 +250,7 @@ steps 是一个向量，因此你可以设置多个评分步骤。评分时，�
         "title": "Step 1",
         "timeout": 60,
         "command": "make test",
-        "max_score": 100,
+        "score": 100,
       }
     ]
   }
