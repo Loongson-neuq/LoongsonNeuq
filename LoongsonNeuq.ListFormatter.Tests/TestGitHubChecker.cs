@@ -1,6 +1,7 @@
 using GitHub;
 using GitHub.Octokit.Client;
 using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.Models;
 using Microsoft.Kiota.Abstractions.Authentication;
 
 namespace LoongsonNeuq.ListFormatter.Tests;

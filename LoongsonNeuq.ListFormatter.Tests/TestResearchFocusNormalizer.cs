@@ -1,4 +1,5 @@
 using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.Models;
 
 namespace LoongsonNeuq.ListFormatter.Tests;
 
