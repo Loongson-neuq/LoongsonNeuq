@@ -29,7 +29,8 @@ public class GradingRunner
 
         foreach (var step in GradingConfig.Steps)
         {
-            var stepRunner = new StepRunner(step);
+
+            var stepRunner = new StepRunner(step, _logger);
 
             StepResult? result = null;
 
