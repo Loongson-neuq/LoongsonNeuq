@@ -40,13 +40,4 @@ public static class DependencyInjectionExtensions
         where TServiceCollection : IServiceCollection
         // Must be concrete type to hide Microsoft's AddLogging
         => services.AddSingleton<ILogger, Logger>();
-
-    public static IServiceCollection AddClassroom(this IServiceCollection services, int id) => services.AddKeyedTransient(id, (p, key) =>
-    {
-        int id = (int)key!;
-
-        ArgumentNullException.ThrowIfNull(id, nameof(id));
-
-        return p.GetRequiredService<GitHubClient>().Classrooms[id];
-    });
 }
