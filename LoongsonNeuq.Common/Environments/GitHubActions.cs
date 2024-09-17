@@ -1,4 +1,4 @@
-namespace LoongsonNeuq.Common;
+namespace LoongsonNeuq.Common.Environments;
 
 /// <summary>
 /// Represents the GitHub Actions environment variables.
