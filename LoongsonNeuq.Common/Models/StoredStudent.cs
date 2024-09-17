@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace LoongsonNeuq.Common;
+namespace LoongsonNeuq.Common.Models;
 
 public class StoredStudent
 {
