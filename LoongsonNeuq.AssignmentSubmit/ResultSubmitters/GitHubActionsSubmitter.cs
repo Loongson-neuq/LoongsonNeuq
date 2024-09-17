@@ -44,7 +44,8 @@ public class GitHubActionsSubmitter : ResultSubmitter
         catch (Exception e)
         {
             _logger.LogError($"Failed to trigger dispatch, message: {e.Message}");
-            return;
+
+            throw;
         }
 
         _logger.LogInformation("Dispatch successfully triggered");
