@@ -7,11 +7,11 @@ public class FormatPipeline
 {
     private readonly ILogger _logger;
 
-    private readonly GitHubIDChecker _githubChecker;
+    private readonly GitHubIdChecker _githubChecker;
 
     private readonly ResearchFocusNormalizer _researchChecker;
 
-    public FormatPipeline(ILogger logger, GitHubIDChecker githubChecker, ResearchFocusNormalizer researchChecker)
+    public FormatPipeline(ILogger logger, GitHubIdChecker githubChecker, ResearchFocusNormalizer researchChecker)
     {
         _logger = logger;
         _githubChecker = githubChecker;

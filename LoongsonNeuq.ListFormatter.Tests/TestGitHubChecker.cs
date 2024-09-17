@@ -7,7 +7,7 @@ namespace LoongsonNeuq.ListFormatter.Tests;
 
 public class TestGitHubChecker
 {
-    private GitHubIDChecker _gitHubChecker;
+    private GitHubIdChecker _gitHubChecker;
 
     [SetUp]
     public void Setup()
@@ -18,7 +18,7 @@ public class TestGitHubChecker
         var adapter = RequestAdapter.Create(new AnonymousAuthenticationProvider());
         var githubClient = new GitHubClient(adapter);
 
-        _gitHubChecker = new GitHubIDChecker(DummyLogger.Instance, githubClient);
+        _gitHubChecker = new GitHubIdChecker(DummyLogger.Instance, githubClient);
     }
 
     [Test]

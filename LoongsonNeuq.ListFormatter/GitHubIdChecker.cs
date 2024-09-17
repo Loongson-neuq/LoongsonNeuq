@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 
 namespace LoongsonNeuq.ListFormatter;
 
-public class GitHubIDChecker : IChecker
+public class GitHubIdChecker : IChecker
 {
     private readonly ILogger _logger;
 
     private readonly GitHubClient _client;
 
-    public GitHubIDChecker(ILogger logger, GitHubClient client)
+    public GitHubIdChecker(ILogger logger, GitHubClient client)
     {
         _logger = logger;
         _client = client;

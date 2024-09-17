@@ -8,7 +8,7 @@ var services = new ServiceCollection();
 services.AddLogging()
     .AddAnonymousAuth()
     .AddGitHubClient()
-    .AddTransient<GitHubIDChecker>()
+    .AddTransient<GitHubIdChecker>()
     .AddTransient<ResearchFocusNormalizer>()
     .AddSingleton<FormatPipeline>();
 
