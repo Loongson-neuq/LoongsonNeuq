@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LoongsonNeuq.Common\LoongsonNeuq.Common.csproj" />
+    <ProjectReference Include="..\LoongsonNeuq.AutoGrader\LoongsonNeuq.AutoGrader.csproj" />
   </ItemGroup>
 
 
