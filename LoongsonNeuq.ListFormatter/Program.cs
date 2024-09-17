@@ -5,12 +5,12 @@ using Microsoft.Extensions.Logging;
 
 var services = new ServiceCollection();
 
-services.AddScoped<ILogger, Logger>();
-
-services.AddTransient<GitHubIDChecker>();
-services.AddTransient<ResearchFocusNormalizer>();
-
-services.AddSingleton<FormatPipeline>();
+services.AddLogging()
+    .AddAnonymousAuth()
+    .AddGitHubClient()
+    .AddTransient<GitHubIDChecker>()
+    .AddTransient<ResearchFocusNormalizer>()
+    .AddSingleton<FormatPipeline>();
 
 var serviceProvider = services.BuildServiceProvider();
 

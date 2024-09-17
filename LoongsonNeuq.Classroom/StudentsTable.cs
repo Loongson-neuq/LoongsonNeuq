@@ -1,63 +1,73 @@
 using System.Collections.Concurrent;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Octokit;
-using LoongsonNeuq.Common.GitHub;
+using LoongsonNeuq.Common;
+using GitHub;
+using System.Diagnostics;
+using GitHub.Models;
+using System.Collections.Frozen;
 
 namespace LoongsonNeuq.Classroom;
 
 public class StudentsTable
 {
-    private readonly GitHubApi _github;
+    private readonly GitHubClient _github;
 
-    private readonly ConcurrentDictionary<string, Student> _students = new();
+    private FrozenDictionary<string, StoredStudent>? _students = null;
 
     private readonly IServiceProvider _serviceProvider;
 
-    public StudentsTable(GitHubApi github, IServiceProvider serviceProvider)
+    public FrozenDictionary<string, StoredStudent> Students
+    {
+        get
+        {
+            if (_students is null)
+            {
+                PopulateStudents();
+            }
+
+            return _students!;
+        }
+    }
+
+    public StudentsTable(GitHubClient github, IServiceProvider serviceProvider)
     {
         _github = github;
         _serviceProvider = serviceProvider;
     }
 
-    public void PopulateUpdateStudents()
+    private string? ReadContent(ContentFile? contentFile)
     {
-        var response = _github.GetAuthedAsync("https://raw.githubusercontent.com/Loongson-neuq/index/master/student_list.json").Result;
-        var students = JsonConvert.DeserializeObject<List<StoredStudent>>(response.Content.ReadAsStringAsync().Result)
-            ?? throw new InvalidOperationException("Failed to get students.");
-
-        var mappedStudents = students.Select(s => new Student
+        if (contentFile is null)
         {
-            Login = s.GitHubLogin,
-            ResearchFocus = s.ResearchFocus
-        }).ToList();
-
-        foreach (var student in mappedStudents)
-        {
-            if (_students.ContainsKey(student.Login))
-            {
-                _students.TryUpdate(student.Login, student, student);
-            }
-            else
-            {
-                _students.TryAdd(student.Login, student);
-            }
+            return null;
         }
 
-        var github = _serviceProvider.GetRequiredService<GitHubClient>();
+        Debug.Assert(contentFile.Encoding == "base64");
 
-        foreach (var student in _students.Values)
-        {
-            student.FillFields(github);
-        }
+        return contentFile.Content;
     }
 
-    private class StoredStudent
+    public void PopulateStudents()
     {
-        [JsonProperty("github_id")]
-        public string GitHubLogin { get; set; } = null!;
+        const string owner = "Loongson-neuq";
+        const string repo = "index";
 
-        [JsonProperty("research_focus")]
-        public List<string> ResearchFocus { get; set; } = null!;
+        const string path = "student_list.json";
+
+        var response = _github.Repos[owner][repo].Contents[path].GetAsync().Result;
+
+        Debug.Assert(response is not null);
+
+        string? content = ReadContent(response.ContentFile);
+
+        if (content is null)
+        {
+            throw new InvalidOperationException("Failed to get students.");
+        }
+
+        var students = JsonConvert.DeserializeObject<List<StoredStudent>>(content)
+            ?? throw new InvalidOperationException("Failed to deserialize students.");
+
+        _students = students.ToDictionary(s => s.GitHubId).ToFrozenDictionary();
     }
 }

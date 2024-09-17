@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Newtonsoft.Json;
 
 namespace LoongsonNeuq.Common.GitHub;
@@ -15,14 +17,19 @@ public class ContributionStat
         Contributions = contributionStats;
     }
 
-    public static async Task<ContributionStat> Fetch(GitHubApi github, string username)
+    public static async Task<ContributionStat?> Fetch(string username)
     {
-        var response = await github.GetUnauthedAsync($"https://github-contributions-api.jogruber.de/v4/{username}?y=last");
+        using (var webClient = new HttpClient())
+        {
+            var response = await webClient.GetAsync($"https://github-contributions-api.jogruber.de/v4/{username}?y=last");
 
-        var contributions = JsonConvert.DeserializeObject<ContributionStat>(response.Content.ReadAsStringAsync().Result)
-            ?? throw new Exception("Failed to get contributions.");
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
 
-        return contributions;
+            return JsonConvert.DeserializeObject<ContributionStat>(response.Content.ReadAsStringAsync().Result);
+        }
     }
 
     public struct Contribution
