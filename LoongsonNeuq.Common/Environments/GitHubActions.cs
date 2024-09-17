@@ -91,4 +91,7 @@ public class GitHubActions
 
     public string? WorkflowRef
         => Environment.GetEnvironmentVariable("GITHUB_WORKFLOW_REF");
+
+    public string? Sha
+        => Environment.GetEnvironmentVariable("GITHUB_SHA");
 }
