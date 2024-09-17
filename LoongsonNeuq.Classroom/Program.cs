@@ -11,10 +11,6 @@ services.AddGitHubAuth()
 
 services.AddSingleton<StudentsTable>();
 
-services.AddGitHubAuth();
-services.WithToken<EnvTokenProvider>();
-services.AddGitHubClient();
-
 services.AddLogging();
 
 var serviceProvider = services.BuildServiceProvider();
