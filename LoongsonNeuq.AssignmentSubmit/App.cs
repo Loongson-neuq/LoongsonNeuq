@@ -17,18 +17,16 @@ public class App
     private readonly AssignmentConfig _config;
 
     private readonly GitHubActions _gitHubActions;
-    private readonly GitHubClient _gitHubClient;
 
     private readonly GradingRunner _gradingRunner;
     private readonly ResultSubmitter _resultSubmitter;
     private SubmitPayload submitPayload = new SubmitPayload();
 
-    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GitHubClient gitHubClient, GradingRunner gradingRunner, ResultSubmitter resultSubmitter)
+    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter)
     {
         _logger = logger;
         _config = config;
         _gitHubActions = gitHubActions;
-        _gitHubClient = gitHubClient;
         _gradingRunner = gradingRunner;
         _resultSubmitter = resultSubmitter;
     }
