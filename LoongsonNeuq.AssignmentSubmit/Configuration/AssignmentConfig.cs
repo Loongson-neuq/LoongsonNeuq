@@ -29,7 +29,7 @@ public class AssignmentConfig
     public AutoGradeConfig AutoGrade { get; set; } = null!;
 
     public string CategorySpecificAssignmentId =>
-        $"global-{NormalizedType}-{Id}";
+        $"{NormalizedType}-{Id}";
 
     private string NormalizedType
         => AssignmentType.Trim().ToUpper() is { } value && value is "OS" or "CPU"
