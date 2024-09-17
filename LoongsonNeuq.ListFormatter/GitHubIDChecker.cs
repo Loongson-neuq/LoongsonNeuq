@@ -1,6 +1,6 @@
 using System.Net.Http.Headers;
 using GitHub;
-using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.Models;
 using Microsoft.Extensions.Logging;
 
 namespace LoongsonNeuq.ListFormatter;

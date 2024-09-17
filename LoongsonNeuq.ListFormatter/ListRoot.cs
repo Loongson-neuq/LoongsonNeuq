@@ -1,4 +1,4 @@
-using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.Models;
 using Newtonsoft.Json;
 
 namespace LoongsonNeuq.ListFormatter;
