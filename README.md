@@ -20,7 +20,7 @@
 
 作业项目中 CI 使用的提交器，包含一个通用自定义评分器以及作业提交器。详细请查看任意作业仓库中 `.assignment/` 下的 `README.md`。
 
-你可以查看这个模板：[AssignmentTemplate](https://github.com/Loongson-neuq/AssignmentTemplate)
+你可以查看这个模板：[AssignmentTemplate](https://github.com/Loongson-neuq/AssignmentTemplate)。同时，下文中有对模板配置文件的介绍。
 
 ## [LoongsonNeuq.Classroom]
 
@@ -49,7 +49,12 @@
   // 用于储存额外信息的 commit sha，可选
   "info_sha": null,
   "log_artifact_url": "提交的 log 文件地址",
-  "score": 100
+  "score": [
+    {
+      "title": "测试点标题",
+      "score": 100,
+    }
+  ]
 }
 ```
 
@@ -186,3 +191,119 @@ GitHub API 已经全部迁移至由源生成器构建的 SDK，调用风格完�
 使用时，通过 Ioc 容器解析 `GitHubClient` 对象，通过该对象调用 API。Ioc 容器具有自动装配功能，通常情况下无需手动解析，默认情况下使用构造函数注入依赖。
 
 注意，在调用 `GetAsync`，`PostAsync` 等谓词性 方法前，请求都不会被发送，只是根据参数构建请求对象。调用方法时，请求会被发送，并返回结果对象。
+
+## 自动评分
+
+`LoongsonNeuq.Autograder` 项目是一个自动评分器，可以根据配置文件自动评分。配置文件位于每一份作业的 `.assignment/config.json`。
+
+配置文件大致如下：
+
+```json
+{
+  "auto_grade": {
+    "enable": false,
+    "upload_output": true,
+    "steps": [
+      {
+        "title": "Step 1",
+        "timeout": 60,
+        "command": "make test",
+        "max_score": 100,
+      }
+    ]
+  }
+}
+```
+
+架构如下：
+
+- `enable`: bool 是否启用自动评分
+- `upload_output`: bool 是否上传评分结果
+- `steps`: 评分步骤
+  - `timeout`: double 评分步骤超时时间, 单位秒
+  - `command`: string 评分步骤命令
+  - `score`: int 该测试点的分数，通过为满分，不通过则为 0
+
+steps 是一个向量，因此你可以设置多个评分步骤。评分时，步骤会依次运行，如果某一步骤超时或是返回非 0 值，会停止评分，并标记该测试点为 0 分。如果需要对测试进行输入输出检查，你需要先编写脚本，然后在 `command` 中调用。
+
+`command` 会被储存在一个临时的 .sh 文件中，然后调用 shell 执行。通常情况下，你可以假设 `cwd` 为仓库根目录。如果是本地调试，则为 `Autograder` 自身的 `cwd`。
+
+## 作业配置
+
+作业配置文件位于每一份作业的 `.assignment/config.json`。
+
+以下是一个样例配置文件：
+
+```json
+{
+  "name": "第一次作业",
+  "description": "第一次作业的描述，详细查看仓库根目录的 README.md",
+  "type": "OS",
+  "status": "open",
+  "id": "week-1",
+  "version": 1,
+  "auto_grade": {
+    "enable": false,
+    "upload_output": true,
+    "steps": [
+      {
+        "title": "Step 1",
+        "timeout": 60,
+        "command": "make test",
+        "max_score": 100,
+      }
+    ]
+  }
+}
+```
+
+作业配置文件，用于标识作业的元信息。**每次布置新作业时需要更新该文件。**
+请注意格式的正确性，因此请仔细阅读以下说明。
+可以使用 `check_config.py` 脚本进行格式检查。
+
+该文件包含以下键：
+
+### `name`
+- 取值范围：`字符串`
+
+作业名称，标识作业的名字，仅用于本地
+
+### `description`
+- 取值范围：`字符串`
+
+作业描述，应该没什么用，仅用于本地
+
+### `type`
+- 取值范围：`字符串`
+
+作业类型，标识该作业属于哪个方向。可选值: "OS", "CPU"
+
+学生只需要选择对应的方向提交作业即可。
+
+用于服务器端的作业分类。
+
+### `status`
+- 取值范围：`字符串`
+
+标识作业状态，可选值: "open", "closed"
+
+### `id`
+- 取值范围：`字符串`
+
+标识作业的唯一ID，与`type`字段一同用于用于服务器端的作业分类。
+
+**请不要包含空格或非ASCII字符**
+
+### `version`
+- 取值范围：`整形数字`
+
+作业版本，用于标识作业的版本号。通常为 1 即可。用于服务端和本地的作业版本控制。有版本更新时可以递增。提交时如果本地版本低于服务器版本会提示更新。同时作业会被远程拒绝。
+
+### 自动评分
+
+其他字段用于自动评分，详见上文。这里不再赘述。
+
+#### `upload_output`
+- 取值范围：`bool`
+
+标识是否上传评分结果。如果为 `true`，则会将评分结果上传到 Github Actions 的 Artifact 中。
