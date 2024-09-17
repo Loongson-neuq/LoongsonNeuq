@@ -174,3 +174,15 @@
 利用`starter_code_repository`中的信息，我们可以获取到本次作业的模板仓库，通过模板仓库，我们就能将作业仓库中的 `.assignment` 文件夹中的配置文件与 Classroom API 获取到的信息对应起来。
 
 这会在每一次运行 `LoongsonNeuq.Classroom` 时行时自动进行，以构建正确的作业提交树形结构。
+
+# GitHub API
+
+GitHub API 已经全部迁移至由源生成器构建的 SDK，调用风格完全遵循 RESTful 风格。
+
+你可以查看 [Migrate octokit.NET to the new generated SDK](https://github.com/Loongson-neuq/LoongsonNeuq/pull/2) 中的信息来了解更多。
+
+由于 SDK 与 GitHub OpenAPI 完全对应，仅有大小写不同，因此你只需要查看[官方文档](https://docs.github.com/en/rest)即可。
+
+使用时，通过 Ioc 容器解析 `GitHubClient` 对象，通过该对象调用 API。Ioc 容器具有自动装配功能，通常情况下无需手动解析，默认情况下使用构造函数注入依赖。
+
+注意，在调用 `GetAsync`，`PostAsync` 等谓词性 方法前，请求都不会被发送，只是根据参数构建请求对象。调用方法时，请求会被发送，并返回结果对象。
