@@ -78,6 +78,12 @@ public class App
             return ExitCode.Success;
         }
 
+        if (_gitHubActions.Actor == "github-classroom[bot]")
+        {
+            _logger.LogInformation("Actor is 'github-classroom[bot]', exiting");
+            return ExitCode.Success;
+        }
+
         if (!_gitHubActions.IsCI)
         {
             _logger.LogError("Not running in CI, exiting");
