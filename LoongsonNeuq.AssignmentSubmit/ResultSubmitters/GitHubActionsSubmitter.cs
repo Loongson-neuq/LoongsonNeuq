@@ -10,6 +10,7 @@ namespace LoongsonNeuq.AssignmentSubmit.Submitters;
 /// <summary>
 /// Submit the result and grade to the main repository
 /// </summary>
+[Obsolete("使用 repository_dispatch 可以泄漏密钥，不要使用")]
 public class GitHubActionsSubmitter : ResultSubmitter
 {
     private readonly ILogger _logger;
