@@ -4,21 +4,28 @@ using Newtonsoft.Json;
 using LoongsonNeuq.AssignmentSubmit;
 using LoongsonNeuq.AssignmentSubmit.Configuration;
 using LoongsonNeuq.Common;
+using LoongsonNeuq.Common.Environments;
+using LoongsonNeuq.Common.Auth;
+using LoongsonNeuq.AssignmentSubmit.Submitters;
 
 var services = new ServiceCollection();
 
 services.AddLogging();
 
-// This is actually a captive dependency, but it's semantically correct
-// just because the parent only has one instance
-services.AddTransient<AssignmentRunner>();
+services.AddGitHubAuth()
+    .WithToken<EnvTokenProvider>()
+    .AddGitHubClient();
+
+services.AddTransient<GradingRunner>();
 
 services.AddSingleton<GitHubActions>();
 services.AddSingleton<App>();
 
+services.AddTransient<ResultSubmitter, GitHubActionsSubmitter>();
+
 services.AddSingleton(p =>
 {
-    var logger = p.GetRequiredService<ILogger<Program>>();
+    var logger = p.GetRequiredService<ILogger>();
 
     string configPath;
 
