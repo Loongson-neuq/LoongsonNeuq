@@ -71,6 +71,13 @@ public class App
     {
         _logger.LogInformation("AssignmentSubmit started");
 
+        // Don't submit if running on AssignmentTemplate
+        if (_gitHubActions.Repository == "Loongson-neuq/AssignmentTemplate")
+        {
+            _logger.LogInformation("Running on AssignmentTemplate, exiting");
+            return ExitCode.Success;
+        }
+
         if (!_gitHubActions.IsCI)
         {
             _logger.LogError("Not running in CI, exiting");
