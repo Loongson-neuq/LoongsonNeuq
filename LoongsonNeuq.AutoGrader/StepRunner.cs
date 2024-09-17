@@ -30,7 +30,7 @@ public class StepRunner
         commandShPath = Path.GetTempFileName();
         File.WriteAllText(commandShPath, Step.Command);
 
-        _logger?.LogInformation($"Command file created: {commandShPath}");
+        _logger?.LogInformation($"  Command file created: {commandShPath}");
     }
 
     private void setupWorkingDirectory()
@@ -39,10 +39,10 @@ public class StepRunner
         {
             WorkingDirectory = Environment.CurrentDirectory;
 
-            _logger?.LogInformation($"Working directory not set, using Runner's working directory");
+            _logger?.LogInformation($"  Working directory not set, using Runner's working directory");
         }
 
-        _logger?.LogInformation($"Working directory: {WorkingDirectory}");
+        _logger?.LogInformation($"  Working directory: {WorkingDirectory}");
     }
 
     public async Task<StepResult> RunAsync()
