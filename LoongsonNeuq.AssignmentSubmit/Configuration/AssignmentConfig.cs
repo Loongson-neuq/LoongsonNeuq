@@ -1,3 +1,4 @@
+using LoongsonNeuq.AutoGrader;
 using Newtonsoft.Json;
 
 namespace LoongsonNeuq.AssignmentSubmit.Configuration;
@@ -26,7 +27,7 @@ public class AssignmentConfig
     public int Version { get; set; }
 
     [JsonProperty("auto_grade")]
-    public AutoGradeConfig AutoGrade { get; set; } = null!;
+    public GradingConfig AutoGrade { get; set; } = null!;
 
     public string CategorySpecificAssignmentId =>
         $"{NormalizedType}-{Id}";
