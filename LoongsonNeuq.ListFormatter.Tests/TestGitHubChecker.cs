@@ -1,4 +1,7 @@
+using GitHub;
+using GitHub.Octokit.Client;
 using LoongsonNeuq.Common;
+using Microsoft.Kiota.Abstractions.Authentication;
 
 namespace LoongsonNeuq.ListFormatter.Tests;
 
@@ -9,7 +12,13 @@ public class TestGitHubChecker
     [SetUp]
     public void Setup()
     {
-        _gitHubChecker = new GitHubIDChecker(DummyLogger.Instance);
+        if (_gitHubChecker != null)
+            return;
+
+        var adapter = RequestAdapter.Create(new AnonymousAuthenticationProvider());
+        var githubClient = new GitHubClient(adapter);
+
+        _gitHubChecker = new GitHubIDChecker(DummyLogger.Instance, githubClient);
     }
 
     [Test]

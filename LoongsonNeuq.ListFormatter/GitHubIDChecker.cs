@@ -1,4 +1,5 @@
 using System.Net.Http.Headers;
+using GitHub;
 using LoongsonNeuq.Common;
 using Microsoft.Extensions.Logging;
 
@@ -8,22 +9,12 @@ public class GitHubIDChecker : IChecker
 {
     private readonly ILogger _logger;
 
-    private readonly HttpClient _client;
+    private readonly GitHubClient _client;
 
-    public GitHubIDChecker(ILogger logger)
+    public GitHubIDChecker(ILogger logger, GitHubClient client)
     {
         _logger = logger;
-
-        _client = new HttpClient()
-        {
-            DefaultRequestHeaders =
-            {
-                UserAgent =
-                {
-                    new ProductInfoHeaderValue("ListFormatter", "1.0")
-                }
-            }
-        };
+        _client = client;
     }
 
     public bool CheckOrNormalize(ref ListRoot root)
@@ -41,7 +32,7 @@ public class GitHubIDChecker : IChecker
 
             try
             {
-               allValid &= CheckStudent(student).GetAwaiter().GetResult();
+                allValid &= CheckStudent(student).GetAwaiter().GetResult();
             }
             catch (Exception e)
             {
@@ -76,10 +67,8 @@ public class GitHubIDChecker : IChecker
     /// <returns>whether valid</returns>
     private async Task<bool> CheckValidGitHubId(string githubId)
     {
-        var url = $"https://api.github.com/users/{githubId}";
+        var response = await _client.Users[githubId].GetAsync();
 
-        HttpResponseMessage response = await _client.GetAsync(url);
-
-        return response.IsSuccessStatusCode;
+        return response is not null && (response.PublicUser is not null || response.PrivateUser is not null);
     }
 }
