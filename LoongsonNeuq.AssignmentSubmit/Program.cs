@@ -63,7 +63,7 @@ services.AddSingleton(p =>
     }
     catch (Exception e)
     {
-        logger.LogError(e, "Failed to read config file, exiting");
+        logger.LogError($"Failed to read config file, exiting. Message: {e.Message}");
         return null!;
     }
 
