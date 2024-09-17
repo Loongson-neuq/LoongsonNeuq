@@ -34,7 +34,13 @@ public static class DependencyInjectionExtensions
         => services.AddSingleton<IAuthenticationProvider, AnonymousAuthenticationProvider>();
 
     public static IServiceCollection AddGitHubClient(this IServiceCollection services)
-        => services.AddSingleton<GitHubClient>();
+    {
+        services.AddSingleton<IRequestAdapter>(
+                p => RequestAdapter.Create(p.GetRequiredService<IAuthenticationProvider>()));
+        services.AddSingleton<GitHubClient>();
+
+        return services;
+    }
 
     public static IServiceCollection AddLogging<TServiceCollection>(this TServiceCollection services)
         where TServiceCollection : IServiceCollection
