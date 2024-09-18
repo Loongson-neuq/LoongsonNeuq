@@ -71,6 +71,11 @@ public class App
     {
         _logger.LogInformation("AssignmentSubmit started");
 
+        if (_config == null)
+        {
+            return ExitCode.ConfigError;
+        }
+
         // Don't submit if running on AssignmentTemplate
         if (_gitHubActions.Repository == "Loongson-neuq/AssignmentTemplate")
         {
