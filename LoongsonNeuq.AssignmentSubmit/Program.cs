@@ -6,6 +6,8 @@ using LoongsonNeuq.Common;
 using LoongsonNeuq.Common.Environments;
 using LoongsonNeuq.Common.Auth;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
+using LoongsonNeuq.AssignmentSubmit.Configuration;
+using LoongsonNeuq.AssignmentSubmit.ResultSubmitters;
 
 var services = new ServiceCollection();
 
@@ -20,15 +22,52 @@ services.AddTransient<GradingRunner>();
 services.AddSingleton<GitHubActions>();
 services.AddSingleton<App>();
 
-services.AddTransient<ResultSubmitter, GitHubActionsSubmitter>();
-
-services.AddSingleton(p =>
+if (args.Any(arg => arg is "--debug" or "-d"))
 {
-    var logger = p.GetRequiredService<ILogger>();
+    services.AddTransient<ResultSubmitter, DummySubmitter>();
+}
+else
+{
+    services.AddTransient<ResultSubmitter, BranchSubmitter>();
+}
 
-    string configPath;
+services.AddSingleton(ReadConfig);
 
-    if (args.Length == 0)
+var serviceProvider = services.BuildServiceProvider();
+
+var result = serviceProvider.GetRequiredService<App>()
+    .Run();
+
+if (result != ExitCode.Success)
+{
+    Environment.Exit((int)result);
+}
+
+AssignmentConfig ReadConfig(IServiceProvider serviceProvider)
+{
+    var logger = serviceProvider.GetRequiredService<ILogger>();
+
+    string? configPath = null;
+
+    foreach (var (arg, idx) in args.Select((a, i) => (a, i)))
+    {
+        if (arg.StartsWith("-"))
+            continue;
+
+        if (File.Exists(arg))
+        {
+            configPath = arg;
+
+            if (idx != arg.Length - 1)
+            {
+                logger.LogWarning($"Ignoring arguments after \"{arg}\"");
+            }
+
+            break;
+        }
+    }
+
+    if (configPath is null)
     {
         if (File.Exists("config.json"))
         {
@@ -46,13 +85,6 @@ services.AddSingleton(p =>
 
         logger.LogWarning($"No config file provided, using default path: {configPath}");
     }
-    else
-    {
-        if (args.Length > 1)
-            logger.LogError("Too many arguments provided, only taking the first one as the config file path");
-
-        configPath = args[0];
-    }
 
     string json;
 
@@ -67,14 +99,4 @@ services.AddSingleton(p =>
     }
 
     return JsonSerializer.Deserialize(json, SourceGenerationContext.Default.AssignmentConfig)!;
-});
-
-var serviceProvider = services.BuildServiceProvider();
-
-var result = serviceProvider.GetRequiredService<App>()
-    .Run();
-
-if (result != ExitCode.Success)
-{
-    Environment.Exit((int)result);
 }

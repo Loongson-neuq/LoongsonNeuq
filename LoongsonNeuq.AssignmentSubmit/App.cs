@@ -117,10 +117,6 @@ public class App
         _resultSubmitter.AssignmentConfig = _config;
         _resultSubmitter.SubmitPayload = submitPayload;
 
-        var serializedPayload = JsonSerializer.Serialize(submitPayload, SourceGenerationContext.Default.SubmitPayload);
-
-        _logger.LogInformation($"Submit payload:\n{serializedPayload}");
-
         _resultSubmitter.SubmitResult();
 
         return ExitCode.Success;

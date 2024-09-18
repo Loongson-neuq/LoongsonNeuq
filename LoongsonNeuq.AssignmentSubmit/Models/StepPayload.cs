@@ -26,6 +26,15 @@ public class StepPayload
     [JsonPropertyName("reached_timeout")]
     public bool ReachedTimeout { get; set; }
 
+    [JsonPropertyName("output_folder")]
+    public string? OutputFolder { get; set; } = null;
+
+    [JsonPropertyName("stdout_file")]
+    public string? StandardOutputFile { get; set; } = null;
+
+    [JsonPropertyName("stderr_file")]
+    public string? StandardErrorFile { get; set; } = null;
+
     [JsonIgnore]
     public StepResult StepResult { get; set; } = null!;
 
