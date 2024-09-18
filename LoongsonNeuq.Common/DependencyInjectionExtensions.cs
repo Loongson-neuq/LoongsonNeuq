@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using GitHub;
 using GitHub.Assignments;
 using GitHub.Classrooms;
@@ -27,7 +28,7 @@ public static class DependencyInjectionExtensions
         return new TokenAuthProvider(new TokenProvider(token));
     });
 
-    public static IServiceCollection WithToken<T>(this IServiceCollection services) where T : class, ITokenProvider
+    public static IServiceCollection WithToken<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] T>(this IServiceCollection services) where T : class, ITokenProvider
         => services.AddSingleton<ITokenProvider, T>();
 
     public static IServiceCollection AddAnonymousAuth(this IServiceCollection services)
