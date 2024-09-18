@@ -26,7 +26,7 @@ public class BranchSubmitter : ResultSubmitter
 
         remoteUrl = _gitHubActions.Repository is null
             ? null
-            : Path.Combine($"https://{_githubTokenProvider.Token}@github.com/", _gitHubActions.Repository);
+            : Path.Combine($"https://github.com/", _gitHubActions.Repository);
     }
 
     const string BranchName = "grading-result";
@@ -137,7 +137,7 @@ public class BranchSubmitter : ResultSubmitter
         // repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
 
         string gitBinary = "git";
-        string args = $"push {RemoteName} {BranchName} --force";
+        string args = $"push {RemoteName} {RemoteRef} --force";
 
         _logger.LogInformation($"Running git command: {gitBinary} {args}");
 
