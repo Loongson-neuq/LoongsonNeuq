@@ -146,6 +146,9 @@ public class BranchSubmitter : ResultSubmitter
                 + $"    {commit.Message}"
             );
 
+            SubmitPayload.InfoBranch = BranchName;
+            SubmitPayload.InfoCommit = commit.Id.Sha;
+
             // Create and checkout to a new branch for the grading result
             // Must create branch after there are commits
             var branch = repository.CreateBranch(BranchName);
