@@ -136,7 +136,7 @@ public class BranchSubmitter : ResultSubmitter
             _logger.LogInformation("Committing the results...");
             var commit = Commit();
 
-            _logger.LogInformation($"Committed:\n"
+            _logger.LogDebug($"Committed:\n"
                 + $"commit {commit.Id}\n"
                 + $"Author: {commit.Author.Name} <{commit.Author.Email}>\n"
                 + $"Committer: {commit.Committer.Name} <{commit.Committer.Email}>\n"
