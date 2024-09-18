@@ -148,7 +148,8 @@ public class BranchSubmitter : ResultSubmitter
                 FileName = gitBinary,
                 Arguments = args,
                 UseShellExecute = false,
-                CreateNoWindow = true
+                CreateNoWindow = true,
+                WorkingDirectory = repository.Info.WorkingDirectory
             }
         };
 
