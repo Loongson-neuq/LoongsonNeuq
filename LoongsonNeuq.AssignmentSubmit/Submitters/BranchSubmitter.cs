@@ -116,7 +116,7 @@ public class BranchSubmitter : ResultSubmitter
             {
                 FileName = gitBinary,
                 Arguments = args,
-                UseShellExecute = false,
+                UseShellExecute = true,
                 CreateNoWindow = true,
                 WorkingDirectory = repository.Info.WorkingDirectory
             }
@@ -143,7 +143,7 @@ public class BranchSubmitter : ResultSubmitter
             {
                 FileName = "git",
                 Arguments = $"checkout --orphan {BranchName}",
-                UseShellExecute = false,
+                UseShellExecute = true,
                 CreateNoWindow = true,
                 WorkingDirectory = repository.Info.WorkingDirectory
             }
