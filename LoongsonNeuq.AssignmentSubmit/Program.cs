@@ -21,7 +21,14 @@ services.AddTransient<GradingRunner>();
 services.AddSingleton<GitHubActions>();
 services.AddSingleton<App>();
 
-services.AddTransient<ResultSubmitter, GitHubActionsSubmitter>();
+if (args.Any(arg => arg is "--debug" or "-d"))
+{
+    services.AddTransient<ResultSubmitter, DummySubmitter>();
+}
+else
+{
+    services.AddTransient<ResultSubmitter, GitHubActionsSubmitter>();
+}
 
 services.AddSingleton(ReadConfig);
 
