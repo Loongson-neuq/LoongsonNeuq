@@ -172,7 +172,7 @@ public class BranchSubmitter : ResultSubmitter
         var branch = repository.CreateBranch(BranchName);
         Commands.Checkout(repository, branch);
 
-        const string gitBak = "git-bak";
+        const string gitBak = "../git-bak";
         const string gitDir = ".git";
 
         Directory.Move(gitDir, gitBak);
@@ -190,6 +190,8 @@ public class BranchSubmitter : ResultSubmitter
             }
         }
         Directory.Move(gitBak, gitDir);
+
+        _logger.LogInformation($"Repository cleaned. Files: {string.Join(", ", Directory.GetFiles(repository.Info.WorkingDirectory))}");
     }
 
     public override void SubmitResult()
