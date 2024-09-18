@@ -7,6 +7,7 @@ using LoongsonNeuq.Common.Environments;
 using LoongsonNeuq.Common.Auth;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
 using LoongsonNeuq.AssignmentSubmit.Configuration;
+using LoongsonNeuq.AssignmentSubmit.ResultSubmitters;
 
 var services = new ServiceCollection();
 
@@ -27,7 +28,7 @@ if (args.Any(arg => arg is "--debug" or "-d"))
 }
 else
 {
-    services.AddTransient<ResultSubmitter, GitHubActionsSubmitter>();
+    services.AddTransient<ResultSubmitter, BranchSubmitter>();
 }
 
 services.AddSingleton(ReadConfig);
