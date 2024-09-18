@@ -10,7 +10,5 @@ public abstract class ResultSubmitter
 
     public SubmitPayload SubmitPayload { get; set; } = null!;
 
-    public List<StepResult?>? StepResults { get; set; } = null!;
-
     public abstract void SubmitResult();
 }
