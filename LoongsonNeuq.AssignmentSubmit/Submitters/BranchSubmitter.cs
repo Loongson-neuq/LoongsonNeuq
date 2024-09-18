@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using LibGit2Sharp;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
@@ -129,9 +130,28 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual void Push()
     {
-        var pushOptions = GetPushOptions();
+        // libgit2sharp does not support force push, so we use git command instead
 
-        repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
+        // var pushOptions = GetPushOptions();
+
+        // repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
+
+        Process git = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = $"push {RemoteName} {RemoteRef} --force",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            }
+        };
+
+        git.Start();
+
+        git.WaitForExit();
     }
 
     public override void SubmitResult()
