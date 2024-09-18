@@ -136,12 +136,17 @@ public class BranchSubmitter : ResultSubmitter
 
         // repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
 
+        string gitBinary = "git";
+        string args = $"push {RemoteName} {BranchName} --force";
+
+        _logger.LogInformation($"Running git command: {gitBinary} {args}");
+
         Process git = new Process
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "git",
-                Arguments = $"push {RemoteName} {BranchName} --force",
+                FileName = gitBinary,
+                Arguments = args,
                 UseShellExecute = false,
                 CreateNoWindow = true
             }
