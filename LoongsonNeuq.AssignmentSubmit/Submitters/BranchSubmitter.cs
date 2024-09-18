@@ -33,16 +33,18 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual void GenerateAndStoreResults(string repoRoot)
     {
-        string resultJson = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
-
-        File.WriteAllText(Path.Combine(repoRoot, "result.json"), resultJson);
-
         if (SubmitPayload.StepPayloads is not null)
         {
             foreach (var step in SubmitPayload.StepPayloads)
             {
                 if (step is null)
                     continue;
+
+                if (step.StepResult.StandardOutput is null
+                    && step.StepResult.StandardError is null)
+                {
+                    continue;
+                }
 
                 var title = step.StepResult.StepConfig.Title;
                 foreach (var c in Path.GetInvalidPathChars())
@@ -61,17 +63,26 @@ public class BranchSubmitter : ResultSubmitter
                 string stdoutFile = "stdout.txt";
                 string stderrFile = "stderr.txt";
 
-                File.WriteAllText(Path.Combine(outputFolder, stdoutFile), step.StepResult.StandardOutput);
-                File.WriteAllText(Path.Combine(outputFolder, stderrFile), step.StepResult.StandardError);
+                if (step.StepResult.StandardOutput is not null)
+                {
+                    File.WriteAllText(Path.Combine(outputFolder, stdoutFile), step.StepResult.StandardOutput);
+                    step.StandardOutputFile = stdoutFile;
+                }
+
+                if (step.StepResult.StandardError is not null)
+                {
+                    File.WriteAllText(Path.Combine(outputFolder, stderrFile), step.StepResult.StandardError);
+                    step.StandardErrorFile = stderrFile;
+                }
 
                 step.OutputFolder = title;
-                step.StandardOutputFile = stdoutFile;
-                step.StandardErrorFile = stderrFile;
             }
         }
 
         string serializedPayload = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
         _logger.LogInformation($"Submit payload:\n{serializedPayload}");
+
+        File.WriteAllText(Path.Combine(repoRoot, "result.json"), serializedPayload);
     }
 
     protected virtual void StageChanges()
