@@ -39,6 +39,11 @@ public class BranchSubmitter : ResultSubmitter
         File.WriteAllText(Path.Combine(repoRoot, "result.json"), resultJson);
     }
 
+    protected virtual void StageChanges()
+    {
+        Commands.Stage(repository, "*");
+    }
+
     public const string DefaultRemoteName = "origin";
 
     protected virtual string RemoteName => DefaultRemoteName;
@@ -128,6 +133,9 @@ public class BranchSubmitter : ResultSubmitter
 
             _logger.LogInformation("Generating and storing results...");
             GenerateAndStoreResults(tempRepo);
+
+            _logger.LogInformation("Staging changes...");
+            StageChanges();
 
             _logger.LogInformation("Committing the results...");
             var commit = Commit();
