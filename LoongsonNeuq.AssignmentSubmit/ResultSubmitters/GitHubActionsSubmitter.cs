@@ -1,9 +1,9 @@
+using System.Text.Json;
 using GitHub;
 using GitHub.Repos.Item.Item.Dispatches;
 using LoongsonNeuq.AssignmentSubmit.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Kiota.Abstractions.Serialization;
-using Newtonsoft.Json;
 
 namespace LoongsonNeuq.AssignmentSubmit.Submitters;
 
@@ -60,7 +60,7 @@ public class GitHubActionsSubmitter : ResultSubmitter
         {
             base.Serialize(writer);
 
-            writer.WriteStringValue("submit_payload", JsonConvert.SerializeObject(submit_payload));
+            writer.WriteStringValue("submit_payload", JsonSerializer.Serialize(submit_payload, SourceGenerationContext.Default.SubmitPayload));
         }
     }
 }
