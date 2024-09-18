@@ -247,7 +247,7 @@ public class BranchSubmitter : ResultSubmitter
             _logger.LogInformation("Pushing the results...");
             try
             {
-                // Push();
+                Push();
             }
             catch (Exception e)
             {
