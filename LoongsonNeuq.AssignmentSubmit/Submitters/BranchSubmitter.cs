@@ -33,10 +33,38 @@ public class BranchSubmitter : ResultSubmitter
     protected virtual void GenerateAndStoreResults(string repoRoot)
     {
         string resultJson = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
-        
-        // TODO: Store STDOUT and STDERR to files
 
         File.WriteAllText(Path.Combine(repoRoot, "result.json"), resultJson);
+
+        SubmitPayload.StepPayloads?.ForEach(step =>
+        {
+            if (step is null)
+                return;
+
+            var title = step.StepResult.StepConfig.Title;
+            foreach (var c in Path.GetInvalidPathChars())
+            {
+                title = title.Replace(c, '_');
+            }
+            
+            if (title is null)
+            {
+                title = Path.GetRandomFileName();
+            }
+
+            string outputFolder = Path.Combine(repoRoot, title);
+            Directory.CreateDirectory(outputFolder);
+
+            string stdoutFile = "stdout.txt";
+            string stderrFile = "stderr.txt";
+
+            File.WriteAllText(Path.Combine(outputFolder, stdoutFile), step.StepResult.StandardOutput);
+            File.WriteAllText(Path.Combine(outputFolder, stderrFile), step.StepResult.StandardError);
+
+            step.OutputFolder = title;
+            step.StandardOutputFile = stdoutFile;
+            step.StandardErrorFile = stderrFile;
+        });
     }
 
     protected virtual void StageChanges()
