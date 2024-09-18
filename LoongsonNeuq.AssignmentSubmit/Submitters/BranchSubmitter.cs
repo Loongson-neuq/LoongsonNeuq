@@ -69,6 +69,9 @@ public class BranchSubmitter : ResultSubmitter
                 step.StandardErrorFile = stderrFile;
             }
         }
+
+        string serializedPayload = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
+        _logger.LogInformation($"Submit payload:\n{serializedPayload}");
     }
 
     protected virtual void StageChanges()
