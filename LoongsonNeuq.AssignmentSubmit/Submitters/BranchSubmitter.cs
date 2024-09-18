@@ -1,3 +1,4 @@
+using System.Text.Json;
 using LibGit2Sharp;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
 using LoongsonNeuq.Common.Auth;
@@ -31,7 +32,11 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual void GenerateAndStoreResults(string repoRoot)
     {
+        string resultJson = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
+        
+        // TODO: Store STDOUT and STDERR to files
 
+        File.WriteAllText(Path.Combine(repoRoot, "result.json"), resultJson);
     }
 
     public const string DefaultRemoteName = "origin";
