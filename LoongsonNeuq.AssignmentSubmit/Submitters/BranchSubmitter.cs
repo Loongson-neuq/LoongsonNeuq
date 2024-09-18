@@ -56,7 +56,7 @@ public class BranchSubmitter : ResultSubmitter
     {
         var sha = _gitHubActions.Sha;
 
-        return repository.Commit($"Result for ${sha}", Author, Committer);
+        return repository.Commit($"Result for {sha}", Author, Committer);
     }
 
     protected virtual PushOptions GetPushOptions()
