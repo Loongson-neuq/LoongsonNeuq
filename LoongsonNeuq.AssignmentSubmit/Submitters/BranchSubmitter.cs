@@ -222,9 +222,12 @@ public class BranchSubmitter : ResultSubmitter
         {
             SetupRepo();
 
-            // Add remote repository
-            repository.Network.Remotes.Add(RemoteName, remoteUrl);
-            _logger.LogInformation($"Remote repository added: {remoteUrl}");
+            if (repository.Network.Remotes[RemoteName] is null)
+            {
+                repository.Network.Remotes.Add(RemoteName, remoteUrl);
+            }
+
+            _logger.LogInformation($"Remote repository: {repository.Network.Remotes[RemoteName].Url}");
 
             _logger.LogInformation("Generating and storing results...");
             GenerateAndStoreResults(repoPath);
