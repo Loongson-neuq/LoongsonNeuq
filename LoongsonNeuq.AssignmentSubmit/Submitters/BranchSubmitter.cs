@@ -111,7 +111,7 @@ public class BranchSubmitter : ResultSubmitter
             throw new InvalidOperationException("No repository found. Make sure the environment variable GITHUB_REPOSITORY is set.");
         }
 
-        string tempRepo = Path.GetTempPath();
+        string tempRepo = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
         _logger.LogInformation($"Using temp directory to construct the repo: {tempRepo}");
 
         Repository.Init(tempRepo);
