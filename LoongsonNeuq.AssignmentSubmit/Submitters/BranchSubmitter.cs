@@ -123,10 +123,6 @@ public class BranchSubmitter : ResultSubmitter
 
         using (repository = new Repository(tempRepo))
         {
-            // Create and checkout to a new branch for the grading result
-            var branch = repository.CreateBranch(BranchName);
-            Commands.Checkout(repository, branch);
-
             // Add remote repository
             repository.Network.Remotes.Add(RemoteName, remoteUrl);
             _logger.LogInformation($"Remote repository added: {remoteUrl}");
@@ -148,6 +144,13 @@ public class BranchSubmitter : ResultSubmitter
                 + $"\n"
                 + $"    {commit.Message}"
             );
+
+            // Create and checkout to a new branch for the grading result
+            // Must create branch after there are commits
+            var branch = repository.CreateBranch(BranchName);
+            Commands.Checkout(repository, branch);
+
+            _logger.LogInformation($"Checked out to branch: {BranchName}");
 
             _logger.LogInformation("Pushing the results...");
             try
