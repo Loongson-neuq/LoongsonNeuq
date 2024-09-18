@@ -1,18 +1,18 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.AutoGrader;
 
 public class GradingStep
 {
-    [JsonProperty("title")]
+    [JsonPropertyName("title")]
     public string Title { get; set; } = null!;
 
-    [JsonProperty("timeout")]
+    [JsonPropertyName("timeout")]
     public double Timeout { get; set; }
 
-    [JsonProperty("command")]
+    [JsonPropertyName("command")]
     public string Command { get; set; } = null!;
 
-    [JsonProperty("score")]
+    [JsonPropertyName("score")]
     public int Score { get; set; }  
 }

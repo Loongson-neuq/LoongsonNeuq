@@ -1,10 +1,10 @@
+using System.Text.Json.Serialization;
 using LoongsonNeuq.Common.Models;
-using Newtonsoft.Json;
 
 namespace LoongsonNeuq.ListFormatter;
 
 public class ListRoot
 {
-    [JsonProperty("students")]
+    [JsonPropertyName("students")]
     public List<StoredStudent> Students { get; set; } = null!;
 }

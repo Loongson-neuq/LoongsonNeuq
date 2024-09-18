@@ -1,15 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.Common.GitHub;
 
 public class ContributionStat
 {
-    [JsonProperty("contributions")]
+    [JsonPropertyName("contributions")]
     public List<Contribution> Contributions { get; } = null!;
 
-    [JsonProperty("total")]
+    [JsonPropertyName("total")]
     public TotalStat Total { get; }
 
     private ContributionStat(List<Contribution> contributionStats)
@@ -28,25 +29,25 @@ public class ContributionStat
                 return null;
             }
 
-            return JsonConvert.DeserializeObject<ContributionStat>(response.Content.ReadAsStringAsync().Result);
+            return JsonSerializer.Deserialize<ContributionStat>(response.Content.ReadAsStringAsync().Result);
         }
     }
 
     public struct Contribution
     {
-        [JsonProperty("date")]
+        [JsonPropertyName("date")]
         public string Date;
 
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public int Count;
 
-        [JsonProperty("level")]
+        [JsonPropertyName("level")]
         public int Level;
     }
 
     public struct TotalStat
     {
-        [JsonProperty("total")]
+        [JsonPropertyName("total")]
         public int LastYearTotal;
     }
 }

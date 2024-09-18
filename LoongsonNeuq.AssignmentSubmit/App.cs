@@ -4,10 +4,10 @@ using LoongsonNeuq.AssignmentSubmit.Models;
 using LoongsonNeuq.Common.Environments;
 using GitHub;
 using GitHub.Repos.Item.Item.Dispatches;
-using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Kiota.Abstractions.Serialization;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
+using System.Text.Json;
 
 namespace LoongsonNeuq.AssignmentSubmit;
 
@@ -112,7 +112,7 @@ public class App
         _resultSubmitter.AssignmentConfig = _config;
         _resultSubmitter.SubmitPayload = submitPayload;
 
-        var serializedPayload = JsonConvert.SerializeObject(submitPayload, Formatting.Indented);
+        var serializedPayload = JsonSerializer.Serialize(submitPayload, SourceGenerationContext.Default.SubmitPayload);
 
         _logger.LogInformation($"Submit payload:\n{serializedPayload}");
 

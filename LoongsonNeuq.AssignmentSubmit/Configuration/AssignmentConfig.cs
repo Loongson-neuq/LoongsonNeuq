@@ -1,5 +1,5 @@
+using System.Text.Json.Serialization;
 using LoongsonNeuq.AutoGrader;
-using Newtonsoft.Json;
 
 namespace LoongsonNeuq.AssignmentSubmit.Configuration;
 
@@ -8,25 +8,25 @@ namespace LoongsonNeuq.AssignmentSubmit.Configuration;
 /// </summary>
 public class AssignmentConfig
 {
-    [JsonProperty("assignment_name")]
+    [JsonPropertyName("assignment_name")]
     public string Name { get; set; } = null!;
 
-    [JsonProperty("description")]
+    [JsonPropertyName("description")]
     public string Description { get; set; } = null!;
 
-    [JsonProperty("type")]
+    [JsonPropertyName("type")]
     public string AssignmentType { get; set; } = null!;
 
-    [JsonProperty("status")]
+    [JsonPropertyName("status")]
     public string Status { get; set; } = null!;
 
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public string Id { get; set; } = null!;
 
-    [JsonProperty("version")]
+    [JsonPropertyName("version")]
     public int Version { get; set; }
 
-    [JsonProperty("auto_grade")]
+    [JsonPropertyName("auto_grade")]
     public GradingConfig AutoGrade { get; set; } = null!;
 
     public string CategorySpecificAssignmentId =>

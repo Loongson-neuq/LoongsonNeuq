@@ -1,5 +1,5 @@
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace LoongsonNeuq.ListFormatter;
 
@@ -60,7 +60,7 @@ public class FormatPipeline
 
         // json is guaranteed to be non-null here
 
-        var root = JsonConvert.DeserializeObject<ListRoot>(json);
+        var root = JsonSerializer.Deserialize<ListRoot>(json);
 
         if (root is null)
         {
@@ -95,7 +95,7 @@ public class FormatPipeline
 
         _logger.LogInformation("Normalization complete, serializing list back to JSON");
 
-        json = JsonConvert.SerializeObject(root, Formatting.Indented);
+        json = JsonSerializer.Serialize(root);
 
         _logger.LogInformation("Serialization complete, saving to file");
 

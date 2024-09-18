@@ -1,10 +1,11 @@
 using System.Collections.Concurrent;
-using Newtonsoft.Json;
 using LoongsonNeuq.Common;
 using GitHub;
 using System.Diagnostics;
 using GitHub.Models;
 using System.Collections.Frozen;
+using LoongsonNeuq.Common.Models;
+using System.Text.Json;
 
 namespace LoongsonNeuq.Classroom;
 
@@ -65,7 +66,7 @@ public class StudentsTable
             throw new InvalidOperationException("Failed to get students.");
         }
 
-        var students = JsonConvert.DeserializeObject<List<StoredStudent>>(content)
+        var students = JsonSerializer.Deserialize<List<StoredStudent>>(content)
             ?? throw new InvalidOperationException("Failed to deserialize students.");
 
         _students = students.ToDictionary(s => s.GitHubId).ToFrozenDictionary();

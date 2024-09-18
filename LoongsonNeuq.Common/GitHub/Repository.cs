@@ -1,24 +1,24 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.Common.GitHub;
 
 public class Repository
 {
-    [JsonProperty("id")]
+    [JsonPropertyName("id")]
     public long Id { get; set; }
 
-    [JsonProperty("name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = null!;
 
-    [JsonProperty("full_name")]
+    [JsonPropertyName("full_name")]
     public string FullName { get; set; } = null!;
 
-    [JsonProperty("html_url")]
+    [JsonPropertyName("html_url")]
     public string HtmlUrl { get; set; } = null!;
 
-    [JsonProperty("private")]
+    [JsonPropertyName("private")]
     public bool Private { get; set; }
 
-    [JsonProperty("default_branch")]
+    [JsonPropertyName("default_branch")]
     public string DefaultBranch { get; set; } = null!;
 }

@@ -1,33 +1,33 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.AssignmentSubmit.Models;
 
 public class SubmitPayload
 {
-    [JsonProperty("student")]
+    [JsonPropertyName("student")]
     public string GitHubId { get; set; } = null!;
 
-    [JsonProperty("assignment_id")]
+    [JsonPropertyName("assignment_id")]
     public string AssignmentId { get; set; } = null!;
 
-    [JsonProperty("timestamp")]
+    [JsonPropertyName("timestamp")]
     public long Timestamp { get; set; }
 
-    [JsonProperty("assignment_repo")]
+    [JsonPropertyName("assignment_repo")]
     public string AssignmentRepo { get; set; } = null!;
 
-    [JsonProperty("repo_sha")]
+    [JsonPropertyName("repo_sha")]
     public string RepoSha { get; set; } = null!;
 
-    [JsonProperty("has_info")]
+    [JsonPropertyName("has_info")]
     public bool HasInfo = false;
 
-    [JsonProperty("info_branch")]
+    [JsonPropertyName("info_branch")]
     public string? InfoBranch { get; set; } = null;
 
-    [JsonProperty("info_commit")]
+    [JsonPropertyName("info_commit")]
     public string? InfoCommit { get; set; } = null;
 
-    [JsonProperty("steps")]
-    public List<StepPayload?>? StepResults { get; set; } = null;
+    [JsonPropertyName("steps")]
+    public List<StepPayload?>? StepPayloads { get; set; } = null;
 }

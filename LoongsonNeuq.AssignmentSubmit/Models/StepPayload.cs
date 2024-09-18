@@ -1,27 +1,27 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.AssignmentSubmit.Models;
 
 public class StepPayload
 {
-    [JsonProperty("title")]
+    [JsonPropertyName("title")]
     public string Title { get; set; } = null!;
 
-    [JsonProperty("elapsed_seconds")]
+    [JsonPropertyName("elapsed_seconds")]
     public double ElapsedSeconds { get; set; }
 
-    [JsonProperty("peak_working_set_64")]
+    [JsonPropertyName("peak_working_set_64")]
     public long? PeakWorkingSet64 { get; set; }
 
-    [JsonProperty("exit_code")]
+    [JsonPropertyName("exit_code")]
     public int ExitCode { get; set; }
 
-    [JsonProperty("score")]
+    [JsonPropertyName("score")]
     public int Score { get; set; }
 
-    [JsonProperty("failed")]
+    [JsonPropertyName("failed")]
     public bool Failed { get; set; }
 
-    [JsonProperty("reached_timeout")]
+    [JsonPropertyName("reached_timeout")]
     public bool ReachedTimeout { get; set; }
 }

@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using LoongsonNeuq.AssignmentSubmit;
-using LoongsonNeuq.AssignmentSubmit.Configuration;
 using LoongsonNeuq.Common;
 using LoongsonNeuq.Common.Environments;
 using LoongsonNeuq.Common.Auth;
@@ -67,7 +66,7 @@ services.AddSingleton(p =>
         return null!;
     }
 
-    return JsonConvert.DeserializeObject<AssignmentConfig>(json)!;
+    return JsonSerializer.Deserialize(json, SourceGenerationContext.Default.AssignmentConfig)!;
 });
 
 var serviceProvider = services.BuildServiceProvider();

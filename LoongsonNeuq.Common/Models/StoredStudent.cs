@@ -1,12 +1,12 @@
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace LoongsonNeuq.Common.Models;
 
 public class StoredStudent
 {
-    [JsonProperty("github_id")]
+    [JsonPropertyName("github_id")]
     public string GitHubId { get; set; } = null!;
 
-    [JsonProperty("research_focus")]
+    [JsonPropertyName("research_focus")]
     public List<string> ResearchFocus { get; set; } = null!;
 }
