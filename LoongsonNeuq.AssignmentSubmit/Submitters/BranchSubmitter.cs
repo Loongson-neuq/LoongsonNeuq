@@ -47,7 +47,7 @@ public class BranchSubmitter : ResultSubmitter
             {
                 title = title.Replace(c, '_');
             }
-            
+
             if (title is null)
             {
                 title = Path.GetRandomFileName();
@@ -163,6 +163,35 @@ public class BranchSubmitter : ResultSubmitter
         }
     }
 
+    public virtual string GetRepoPath()
+        => _gitHubActions.Workspace ?? Directory.GetCurrentDirectory();
+
+    public virtual void SetupRepo()
+    {
+        // Create and checkout to a new branch for the grading result
+        var branch = repository.CreateBranch(BranchName);
+        Commands.Checkout(repository, branch);
+
+        const string gitBak = "git-bak";
+        const string gitDir = ".git";
+
+        Directory.Move(gitDir, gitBak);
+        {
+            string repo = repository.Info.WorkingDirectory;
+
+            foreach (string file in Directory.GetFiles(repo))
+            {
+                File.Delete(file);
+            }
+
+            foreach (string dir in Directory.GetDirectories(repo))
+            {
+                Directory.Delete(dir, true);
+            }
+        }
+        Directory.Move(gitBak, gitDir);
+    }
+
     public override void SubmitResult()
     {
         _logger.LogInformation($"Running {nameof(BranchSubmitter)}");
@@ -174,19 +203,29 @@ public class BranchSubmitter : ResultSubmitter
             throw new InvalidOperationException("No repository found. Make sure the environment variable GITHUB_REPOSITORY is set.");
         }
 
-        string tempRepo = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-        _logger.LogInformation($"Using temp directory to construct the repo: {tempRepo}");
+        string repoPath = GetRepoPath();
+        _logger.LogInformation($"Using directory to construct the repo: {repoPath}");
 
-        Repository.Init(tempRepo);
-
-        using (repository = new Repository(tempRepo))
+        if (!Directory.Exists(repoPath))
         {
+            throw new DirectoryNotFoundException($"Directory not found: {repoPath}");
+        }
+
+        if (!Repository.IsValid(repoPath))
+        {
+            Repository.Init(repoPath);
+        }
+
+        using (repository = new Repository(repoPath))
+        {
+            SetupRepo();
+
             // Add remote repository
             repository.Network.Remotes.Add(RemoteName, remoteUrl);
             _logger.LogInformation($"Remote repository added: {remoteUrl}");
 
             _logger.LogInformation("Generating and storing results...");
-            GenerateAndStoreResults(tempRepo);
+            GenerateAndStoreResults(repoPath);
 
             _logger.LogInformation("Staging changes...");
             StageChanges();
@@ -205,11 +244,6 @@ public class BranchSubmitter : ResultSubmitter
 
             SubmitPayload.InfoBranch = BranchName;
             SubmitPayload.InfoCommit = commit.Id.Sha;
-
-            // Create and checkout to a new branch for the grading result
-            // Must create branch after there are commits
-            var branch = repository.CreateBranch(BranchName);
-            Commands.Checkout(repository, branch);
 
             _logger.LogInformation($"Checked out to branch: {BranchName}");
 
