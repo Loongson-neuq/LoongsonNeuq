@@ -150,6 +150,11 @@ public class BranchSubmitter : ResultSubmitter
         git.Start();
 
         git.WaitForExit();
+
+        if (git.ExitCode != 0)
+        {
+            throw new Exception("Failed to push the results.");
+        }
     }
 
     public override void SubmitResult()
