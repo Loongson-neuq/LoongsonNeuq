@@ -141,7 +141,7 @@ public class BranchSubmitter : ResultSubmitter
             StartInfo = new ProcessStartInfo
             {
                 FileName = "git",
-                Arguments = $"push {RemoteName} {RemoteRef} --force",
+                Arguments = $"push {RemoteName} {BranchName} --force",
                 UseShellExecute = false,
                 CreateNoWindow = true
             }
