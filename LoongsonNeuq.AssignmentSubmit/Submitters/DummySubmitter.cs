@@ -18,8 +18,10 @@ public class DummySubmitter : ResultSubmitter
 
         _logger.LogWarning("Dummy submitter is used, no action will be taken");
 
+#if !DEBUG
         string submitPayload = JsonSerializer.Serialize(SubmitPayload, SourceGenerationContext.Default.SubmitPayload);
 
         _logger.LogInformation($"Submit payload:\n{submitPayload}");
+#endif
     }
 }
