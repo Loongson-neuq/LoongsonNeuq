@@ -135,11 +135,34 @@ public class BranchSubmitter : ResultSubmitter
     public virtual string GetRepoPath()
         => _gitHubActions.Workspace ?? Directory.GetCurrentDirectory();
 
+    protected virtual void CheckoutToNewBranch()
+    {
+        Process git = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = $"checkout --orphan {BranchName}",
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WorkingDirectory = repository.Info.WorkingDirectory
+            }
+        };
+
+        git.Start();
+
+        git.WaitForExit();
+
+        if (git.ExitCode != 0)
+        {
+            throw new Exception("Failed to checkout to a new branch.");
+        }
+    }
+
     public virtual void SetupRepo()
     {
         // Create and checkout to a new branch for the grading result
-        var branch = repository.CreateBranch(BranchName);
-        Commands.Checkout(repository, branch);
+        CheckoutToNewBranch();
 
         const string gitBak = "../git-bak";
         const string gitDir = ".git";
@@ -224,7 +247,7 @@ public class BranchSubmitter : ResultSubmitter
             _logger.LogInformation("Pushing the results...");
             try
             {
-                Push();
+                // Push();
             }
             catch (Exception e)
             {
