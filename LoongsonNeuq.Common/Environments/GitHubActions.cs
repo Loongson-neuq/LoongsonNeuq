@@ -94,4 +94,7 @@ public class GitHubActions
 
     public string? Sha
         => Environment.GetEnvironmentVariable("GITHUB_SHA");
+
+    public string? Workspace
+        => Environment.GetEnvironmentVariable("GITHUB_WORKSPACE");
 }
