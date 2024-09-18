@@ -93,48 +93,11 @@ public class BranchSubmitter : ResultSubmitter
         return repository.Commit($"Result for {sha}", Author, Committer);
     }
 
-    protected virtual PushOptions GetPushOptions()
-    {
-        var pushOptions = new PushOptions
-        {
-            CredentialsProvider = (url, usernameFromUrl, types) => new UsernamePasswordCredentials
-            {
-                Username = "x-access-token",  // GitHub uses "x-access-token" for token-based authentication
-                Password = Environment.GetEnvironmentVariable("GITHUB_TOKEN")
-            }
-        };
-
-        pushOptions.OnPackBuilderProgress = (stage, current, total) =>
-        {
-            _logger.LogInformation($"PackBuilder: {stage} {current}/{total}");
-            return true;
-        };
-
-        pushOptions.OnPushTransferProgress = (current, total, bytes) =>
-        {
-            _logger.LogInformation($"PushTransfer: {current}/{total} ({bytes} bytes)");
-            return true;
-        };
-
-        pushOptions.OnPushStatusError = (pushStatusErrors) =>
-        {
-            _logger.LogError($"Failed to push the results:");
-            _logger.LogError($"    Message: {pushStatusErrors.Message}.");
-            _logger.LogError($"    Reference: {pushStatusErrors.Reference}.");
-        };
-
-        return pushOptions;
-    }
-
     protected virtual string RemoteRef => $"refs/heads/{BranchName}";
 
     protected virtual void Push()
     {
         // libgit2sharp does not support force push, so we use git command instead
-
-        // var pushOptions = GetPushOptions();
-
-        // repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
 
         string gitBinary = "git";
         string args = $"push {RemoteName} {RemoteRef} --force";
