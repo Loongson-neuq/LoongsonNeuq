@@ -142,8 +142,6 @@ public class BranchSubmitter : ResultSubmitter
             {
                 FileName = "git",
                 Arguments = $"push {RemoteName} {RemoteRef} --force",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             }
