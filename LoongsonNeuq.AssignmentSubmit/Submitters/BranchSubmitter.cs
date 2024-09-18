@@ -97,12 +97,13 @@ public class BranchSubmitter : ResultSubmitter
         return pushOptions;
     }
 
+    protected virtual string RemoteRef => $"refs/heads/{BranchName}";
+
     protected virtual void Push()
     {
         var pushOptions = GetPushOptions();
 
-        var remoteRef = repository.Branches[RemoteName].CanonicalName;
-        repository.Network.Push(repository.Network.Remotes[RemoteName], remoteRef, pushOptions);
+        repository.Network.Push(repository.Network.Remotes[RemoteName], RemoteRef, pushOptions);
     }
 
     public override void SubmitResult()
