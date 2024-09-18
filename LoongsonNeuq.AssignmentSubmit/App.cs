@@ -107,7 +107,7 @@ public class App
         {
             _logger.LogInformation("Auto grading enabled, Starting auto grading");
 
-            submitPayload.StepResults = _gradingRunner.Run();
+            submitPayload.StepPayloads = _gradingRunner.Run();
         }
         else
         {
@@ -121,7 +121,7 @@ public class App
 
         _logger.LogInformation($"Submit payload:\n{serializedPayload}");
 
-        _resultSubmitter.SubmitResult();;
+        _resultSubmitter.SubmitResult();
 
         return ExitCode.Success;
     }

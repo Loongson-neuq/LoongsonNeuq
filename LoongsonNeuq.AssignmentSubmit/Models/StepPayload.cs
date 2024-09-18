@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using LoongsonNeuq.AutoGrader;
 
 namespace LoongsonNeuq.AssignmentSubmit.Models;
 
@@ -24,4 +25,10 @@ public class StepPayload
 
     [JsonPropertyName("reached_timeout")]
     public bool ReachedTimeout { get; set; }
+
+    [JsonIgnore]
+    public StepResult StepResult { get; set; } = null!;
+
+    [JsonIgnore]
+    public GradingStep StepConfig { get; set; } = null!;
 }

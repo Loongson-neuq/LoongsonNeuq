@@ -25,7 +25,7 @@ public class GradingRunner
             return null;
         }
 
-        List<StepPayload?> stepResults = new();
+        List<StepPayload?> stepPayloads = new();
 
         foreach (var step in GradingConfig.Steps)
         {
@@ -45,7 +45,7 @@ public class GradingRunner
 
             if (result is not null)
             {
-                stepResults.Add(new StepPayload
+                stepPayloads.Add(new StepPayload
                 {
                     Title = step.Title,
                     ElapsedSeconds = result.ElapsedSeconds,
@@ -53,16 +53,18 @@ public class GradingRunner
                     ExitCode = result.ExitCode,
                     Score = result.Score,
                     Failed = result.Failed,
-                    ReachedTimeout = result.ReachedTimeout
+                    ReachedTimeout = result.ReachedTimeout,
+                    StepResult = result,
+                    StepConfig = step
                 });
             }
             else
             {
                 // placeholder for failed step
-                stepResults.Add(null);
+                stepPayloads.Add(null);
             }
         }
 
-        return stepResults;
+        return stepPayloads;
     }
 }
