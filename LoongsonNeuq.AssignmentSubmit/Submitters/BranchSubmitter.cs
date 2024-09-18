@@ -26,7 +26,7 @@ public class BranchSubmitter : ResultSubmitter
 
         remoteUrl = _gitHubActions.Repository is null
             ? null
-            : Path.Combine("https://github.com/", _gitHubActions.Repository);
+            : Path.Combine($"https://{_githubTokenProvider.Token}@github.com/", _gitHubActions.Repository);
     }
 
     const string BranchName = "grading-result";
