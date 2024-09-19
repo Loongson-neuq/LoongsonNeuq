@@ -26,10 +26,11 @@ public class RunProcessContext
             try
             {
                 caputredPeakWorkingSet64 = _process.PeakWorkingSet64;
-
+            }
+            finally
+            {
                 await Task.Yield();
             }
-            catch { }
         }
     }
 
