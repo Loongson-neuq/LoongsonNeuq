@@ -105,8 +105,13 @@ public class BranchSubmitter : ResultSubmitter
 
     private void SetupGitConfig()
     {
-        repository.Config.Set("user.name", GitHubActionBot);
-        repository.Config.Set("user.email", GitHubActionEmail);
+        // there's seems issues in string marshaller in libgit2sharp
+        // All strings are marshalled as empty strings, so we use git command instead
+        RunGitCommand("git", $"config user.name \"{GitHubActionBot}\"");
+        RunGitCommand("git", $"config user.email \"{GitHubActionEmail}\"");
+
+        // repository.Config.Set("user.name", GitHubActionBot);
+        // repository.Config.Set("user.email", GitHubActionEmail);
     }
 
     protected void RunGitCommand(string gitFile, string args, string? WorkingDirectory = null)
