@@ -103,11 +103,52 @@ public class BranchSubmitter : ResultSubmitter
     protected virtual Signature Committer
         => Author;
 
+    private void SetupGitConfig()
+    {
+        repository.Config.Set("user.name", GitHubActionBot);
+        repository.Config.Set("user.email", GitHubActionEmail);
+    }
+
+    protected void RunGitCommand(string gitFile, string args, string? WorkingDirectory = null)
+    {
+        _logger.LogInformation($"Running git command: {gitFile} {args}");
+
+        Process git = new Process
+        {
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = gitFile,
+                Arguments = args,
+                UseShellExecute = true,
+                CreateNoWindow = true,
+                WorkingDirectory = WorkingDirectory ?? repository.Info.WorkingDirectory
+            }
+        };
+
+        git.Start();
+        git.WaitForExit();
+
+        if (git.ExitCode != 0)
+        {
+            throw new Exception($"Failed to run git command: {git} {args}");
+        }
+    }
+
     protected virtual Commit Commit()
     {
         var sha = _gitHubActions.Sha;
 
-        return repository.Commit($"Result for {sha}", Author, Committer);
+        // AoT deployed libgit2sharp fails include commit message, so we use git command instead
+        RunGitCommand("git", $"commit -m \"Grading result for {sha}\"");
+
+        var commit = repository.Branches[BranchName].Commits.MaxBy(c => c.Committer.When);
+
+        if (commit is null)
+        {
+            throw new Exception("No commit found.");
+        }
+
+        return commit;
     }
 
     protected virtual string RemoteRef => $"refs/heads/{BranchName}";
@@ -116,31 +157,9 @@ public class BranchSubmitter : ResultSubmitter
     {
         // libgit2sharp does not support force push, so we use git command instead
 
-        string gitBinary = "git";
         string args = $"push {RemoteName} {RemoteRef} --force";
 
-        _logger.LogInformation($"Running git command: {gitBinary} {args}");
-
-        Process git = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = gitBinary,
-                Arguments = args,
-                UseShellExecute = true,
-                CreateNoWindow = true,
-                WorkingDirectory = repository.Info.WorkingDirectory
-            }
-        };
-
-        git.Start();
-
-        git.WaitForExit();
-
-        if (git.ExitCode != 0)
-        {
-            throw new Exception("Failed to push the results.");
-        }
+        RunGitCommand("git", args);
     }
 
     public virtual string GetRepoPath()
@@ -148,26 +167,7 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual void CheckoutToNewBranch()
     {
-        Process git = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = "git",
-                Arguments = $"checkout --orphan {BranchName}",
-                UseShellExecute = true,
-                CreateNoWindow = true,
-                WorkingDirectory = repository.Info.WorkingDirectory
-            }
-        };
-
-        git.Start();
-
-        git.WaitForExit();
-
-        if (git.ExitCode != 0)
-        {
-            throw new Exception("Failed to checkout to a new branch.");
-        }
+        RunGitCommand("git", $"checkout --orphan {BranchName}");
     }
 
     public virtual void SetupRepo()
