@@ -65,6 +65,8 @@ public class RunProcessContext
 
         var stopwatch = new Stopwatch();
 
+        _process.Exited += (sender, e) => stopwatch.Stop();
+
         bool reachedTimeout = false;
 
         _process.Start();
@@ -112,6 +114,7 @@ public class RunProcessContext
     private struct TimeMeasuredScope : IDisposable
     {
         private readonly Stopwatch _stopwatch = null!;
+        private bool _disposed;
 
         public readonly TimeSpan Elapsed => _stopwatch.Elapsed;
 
@@ -128,7 +131,13 @@ public class RunProcessContext
 
         public void Dispose()
         {
-            _stopwatch.Stop();
+            if (_disposed)
+                return;
+
+            if (_stopwatch.IsRunning)
+            {
+                _stopwatch.Stop();
+            }
         }
     }
 }
