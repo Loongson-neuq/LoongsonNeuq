@@ -141,6 +141,8 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual Commit Commit()
     {
+        SetupGitConfig();
+
         var sha = _gitHubActions.Sha;
 
         // AoT deployed libgit2sharp fails include commit message, so we use git command instead
