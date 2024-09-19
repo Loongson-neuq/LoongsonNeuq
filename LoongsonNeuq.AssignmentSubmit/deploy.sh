@@ -1,10 +1,10 @@
 # /bin/bash
 
-export DEPLOY_FOLDER = "publish"
-export MAIN_EXE = "LoongsonNeuq.AssignmentSubmit"
-export PACK_ID = "AssignmentSubmit"
-export PACK_VERSION = "1.0.0"
-export OUTPUT_DIR = "output"
+export DEPLOY_FOLDER="publish"
+export MAIN_EXE="LoongsonNeuq.AssignmentSubmit"
+export PACK_ID="AssignmentSubmit"
+export PACK_VERSION="1.0.0"
+export OUTPUT_DIR="output"
 
 echo "Cleaning up previous build"
 rm -rf $DEPLOY_FOLDER
