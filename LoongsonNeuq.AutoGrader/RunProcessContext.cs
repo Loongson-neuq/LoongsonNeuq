@@ -66,7 +66,6 @@ public class RunProcessContext
         var stopwatch = new Stopwatch();
 
         bool reachedTimeout = false;
-        Task firstExitedTask;
 
         _process.Start();
         using (var timeMeasuredScope = new TimeMeasuredScope(stopwatch))
@@ -83,7 +82,7 @@ public class RunProcessContext
                 (timeoutTask = TimeoutMonitorAsync(_cancellationToken)),
             };
 
-            firstExitedTask = await Task.WhenAny(tasks);
+            Task firstExitedTask = await Task.WhenAny(tasks);
 
             if (firstExitedTask is not null && firstExitedTask == timeoutTask)
             {
