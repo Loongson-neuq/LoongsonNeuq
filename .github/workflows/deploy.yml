@@ -25,7 +25,9 @@ jobs:
       run: dotnet restore LoongsonNeuq.AssignmentSubmit/LoongsonNeuq.AssignmentSubmit.csproj
 
     - name: Deploy project
-      run: ./LoongsonNeuq.AssignmentSubmit/deploy.sh
+      run: |
+        chmod +x LoongsonNeuq.AssignmentSubmit/deploy.sh
+        ./LoongsonNeuq.AssignmentSubmit/deploy.sh
     
     - name: Upload to Artifact
       uses: actions/upload-artifact@v4
