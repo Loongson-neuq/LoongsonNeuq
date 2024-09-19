@@ -74,14 +74,13 @@ public class RunProcessContext
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
 
-            Task processTask = _process.WaitForExitAsync(_cancellationToken);
             Task timeoutTask;
 
             var tasks = new List<Task>
             {
+                _process.WaitForExitAsync(_cancellationToken),
                 MemoryMonitorAsync(_cancellationToken),
                 (timeoutTask = TimeoutMonitorAsync(_cancellationToken)),
-                processTask
             };
 
             firstExitedTask = await Task.WhenAny(tasks);
