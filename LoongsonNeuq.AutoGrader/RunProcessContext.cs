@@ -134,6 +134,8 @@ public class RunProcessContext
             if (_disposed)
                 return;
 
+            _disposed = false;
+
             if (_stopwatch.IsRunning)
             {
                 _stopwatch.Stop();
