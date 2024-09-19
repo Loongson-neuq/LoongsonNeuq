@@ -67,10 +67,9 @@ public class RunProcessContext
         bool reachedTimeout = false;
         Task firstExitedTask;
 
+        _process.Start();
         using (var timeMeasuredScope = new TimeMeasuredScope(stopwatch))
         {
-            _process.Start();
-
             _process.BeginOutputReadLine();
             _process.BeginErrorReadLine();
 
