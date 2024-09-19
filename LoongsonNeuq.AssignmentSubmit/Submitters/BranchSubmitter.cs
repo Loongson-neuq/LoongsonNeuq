@@ -257,8 +257,9 @@ public class BranchSubmitter : ResultSubmitter
                 + $"    {commit.Message}"
             );
 
-            SubmitPayload.InfoBranch = BranchName;
-            SubmitPayload.InfoCommit = commit.Id.Sha;
+            // This is idiot, we can't change after the commit 
+            // SubmitPayload.InfoBranch = BranchName;
+            // SubmitPayload.InfoCommit = commit.Id.Sha;
 
             _logger.LogInformation($"Checked out to branch: {BranchName}");
 
