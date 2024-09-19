@@ -26,11 +26,12 @@ jobs:
 
     - name: Deploy project
       run: |
-        chmod +x LoongsonNeuq.AssignmentSubmit/deploy.sh
-        ./LoongsonNeuq.AssignmentSubmit/deploy.sh
+        cd LoongsonNeuq.AssignmentSubmit
+        chmod +x deploy.sh
+        ./deploy.sh
     
     - name: Upload to Artifact
       uses: actions/upload-artifact@v4
       with:
         name: AssignmentSubmit
-        path: 'output'
+        path: 'LoongsonNeuq.AssignmentSubmit/output'
