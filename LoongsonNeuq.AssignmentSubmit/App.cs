@@ -83,6 +83,7 @@ public class App
             return ExitCode.Success;
         }
 
+        // FIXME: This is not adequate, we should check if the repo is a template repo
         if (_gitHubActions.Actor == "github-classroom[bot]")
         {
             _logger.LogInformation("Actor is 'github-classroom[bot]', exiting");
