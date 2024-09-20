@@ -6,6 +6,7 @@ using GitHub.Models;
 using System.Collections.Frozen;
 using LoongsonNeuq.Common.Models;
 using System.Text.Json;
+using System.Text;
 
 namespace LoongsonNeuq.Classroom;
 
@@ -13,22 +14,9 @@ public class StudentsTable
 {
     private readonly GitHubClient _github;
 
-    private FrozenDictionary<string, StoredStudent>? _students = null;
-
     private readonly IServiceProvider _serviceProvider;
 
-    public FrozenDictionary<string, StoredStudent> Students
-    {
-        get
-        {
-            if (_students is null)
-            {
-                PopulateStudents();
-            }
-
-            return _students!;
-        }
-    }
+    public List<StoredStudent> RegisteredStudents { get; private set; } = null!;
 
     public StudentsTable(GitHubClient github, IServiceProvider serviceProvider)
     {
@@ -38,14 +26,16 @@ public class StudentsTable
 
     private string? ReadContent(ContentFile? contentFile)
     {
-        if (contentFile is null)
+        if (contentFile is null || contentFile.Content is null)
         {
             return null;
         }
 
         Debug.Assert(contentFile.Encoding == "base64");
 
-        return contentFile.Content;
+        // Decode base64
+        byte[] data = Convert.FromBase64String(contentFile.Content);
+        return Encoding.UTF8.GetString(data);
     }
 
     public void PopulateStudents()
@@ -66,9 +56,7 @@ public class StudentsTable
             throw new InvalidOperationException("Failed to get students.");
         }
 
-        var students = JsonSerializer.Deserialize<List<StoredStudent>>(content)
+        RegisteredStudents = JsonSerializer.Deserialize<List<StoredStudent>>(content)
             ?? throw new InvalidOperationException("Failed to deserialize students.");
-
-        _students = students.ToDictionary(s => s.GitHubId).ToFrozenDictionary();
     }
 }
