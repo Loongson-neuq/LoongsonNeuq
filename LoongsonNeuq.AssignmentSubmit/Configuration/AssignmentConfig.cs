@@ -8,7 +8,7 @@ namespace LoongsonNeuq.AssignmentSubmit.Configuration;
 /// </summary>
 public class AssignmentConfig
 {
-    [JsonPropertyName("assignment_name")]
+    [JsonPropertyName("name")]
     public string Name { get; set; } = null!;
 
     [JsonPropertyName("description")]
