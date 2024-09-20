@@ -153,20 +153,20 @@ public class BranchSubmitter : ResultSubmitter
 
     public virtual string Stdout(StepPayload step)
     {
-        if (step.StandardOutputFile is null || GitHubBranchUrl is null)
+        if (step.StandardOutputFile is null)
             return "N/A";
 
-        string url = Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardOutputFile);
+        string url = Path.Combine(step.OutputFolder!, step.StandardOutputFile);
 
         return $"[{step.StandardOutputFile}]({HttpUtility.UrlEncode(url)})";
     }
 
     public virtual string Stderr(StepPayload step)
     {
-        if (step.StandardErrorFile is null || GitHubBranchUrl is null)
+        if (step.StandardErrorFile is null)
             return "N/A";
 
-        string url = Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardErrorFile);
+        string url = Path.Combine(step.OutputFolder!, step.StandardErrorFile);
 
         return $"[{step.StandardErrorFile}]({HttpUtility.UrlEncode(url)})";
     }
