@@ -122,8 +122,8 @@ public class BranchSubmitter : ResultSubmitter
 
         docBuilder.AppendLine($"## Scores");
         {
-            docBuilder.AppendLine("| Step | Score | Time | Peak Memory | LTE | Failed | Stdout | Stderr |");
-            docBuilder.AppendLine("|------|-------|------|-------------|-----|--------|--------|--------|");
+            docBuilder.AppendLine("| Step | Score | Time | Peak Mem | LTE | Failed | Stdout | Stderr |");
+            docBuilder.AppendLine("|------|-------|------|----------|-----|--------|--------|--------|");
 
             foreach (var step in SubmitPayload.StepPayloads)
             {
@@ -180,7 +180,7 @@ public class BranchSubmitter : ResultSubmitter
 
         long bytes = result.PeakWorkingSet64.Value;
 
-        double kbytes = bytes / 1024;
+        double kbytes = bytes / 1024.0;
 
         if (kbytes > 1000)
             return $"{(int)kbytes}kb";
