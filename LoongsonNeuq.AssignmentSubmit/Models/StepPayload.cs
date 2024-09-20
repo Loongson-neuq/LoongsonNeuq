@@ -20,6 +20,9 @@ public class StepPayload
     [JsonPropertyName("score")]
     public int Score { get; set; }
 
+    [JsonPropertyName("full_score")]
+    public int FullScore => StepConfig.Score;
+
     [JsonPropertyName("failed")]
     public bool Failed { get; set; }
 
