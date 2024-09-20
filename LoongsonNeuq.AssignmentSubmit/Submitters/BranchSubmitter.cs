@@ -123,8 +123,8 @@ public class BranchSubmitter : ResultSubmitter
 
         docBuilder.AppendLine($"## Scores");
         {
-            docBuilder.AppendLine("| Step | Score | Time | Peak Memory | Exit Code | LTE | Failed | Stdout | Stderr |");
-            docBuilder.AppendLine("|------|-------|------|-------------|-----------|-----|--------|--------|--------|");
+            docBuilder.AppendLine("| Step | Score | Time | Peak Memory | LTE | Failed | Stdout | Stderr |");
+            docBuilder.AppendLine("|------|-------|------|-------------|-----|--------|--------|--------|");
 
             foreach (var step in SubmitPayload.StepPayloads)
             {
@@ -133,7 +133,7 @@ public class BranchSubmitter : ResultSubmitter
 
                 var result = step.StepResult;
 
-                docBuilder.AppendLine($"| {result.StepConfig.Title} | {Score(step)} | {ElapsedTime(result)} | {PeakMemory(result)} | {result.ExitCode} | {result.ReachedTimeout} | {result.Failed} | {Stdout(step)} | {Stderr(step)} |");
+                docBuilder.AppendLine($"| {result.StepConfig.Title} | {Score(step)} | {ElapsedTime(result)} | {PeakMemory(result)} | {result.ReachedTimeout} | {result.Failed} | {Stdout(step)} | {Stderr(step)} |");
             }
 
             docBuilder.AppendLine();
