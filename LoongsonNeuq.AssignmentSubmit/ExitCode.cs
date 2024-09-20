@@ -8,4 +8,5 @@ public enum ExitCode : int
     FailedToGetGitHubId = 3,
     FailedToGetAssignmentRepo = 4,
     FailedToGetRepoSha = 5,
+    RequiredStepFailed = 6,
 }

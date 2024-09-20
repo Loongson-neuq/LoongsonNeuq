@@ -118,6 +118,27 @@ public class App
         _resultSubmitter.SubmitPayload = submitPayload;
 
         _resultSubmitter.SubmitResult();
+        
+        bool hasRequiredStepFailed = submitPayload.StepPayloads is not null 
+            && submitPayload.StepPayloads.Any(
+                step => step?.StepConfig.Required is true && step.Failed);
+        
+        if (hasRequiredStepFailed)
+        {
+            _logger.LogError("Some required steps failed:");
+
+            foreach (var step in submitPayload.StepPayloads!)
+            {
+                if (step?.StepConfig.Required is true && step.Failed)
+                {
+                    _logger.LogError($"    {step.StepConfig.Title}");
+                }
+            }
+
+            _logger.LogError("See details in the result.json file");
+
+            return ExitCode.RequiredStepFailed;
+        }
 
         return ExitCode.Success;
     }

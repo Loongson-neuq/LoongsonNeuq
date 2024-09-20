@@ -14,5 +14,12 @@ public class GradingStep
     public string Command { get; set; } = null!;
 
     [JsonPropertyName("score")]
-    public int Score { get; set; }  
+    public int Score { get; set; }
+
+    /// <summary>
+    /// Whether the step is required to pass.
+    /// If enabled and some steps are failed, the CI will fail.
+    /// </summary>
+    [JsonPropertyName("required")]
+    public bool? Required { get; set; }
 }
