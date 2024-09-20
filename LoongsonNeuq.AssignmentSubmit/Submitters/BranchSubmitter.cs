@@ -149,7 +149,7 @@ public class BranchSubmitter : ResultSubmitter
         => $"{step.Score}/{step.FullScore}";
 
     public virtual string ElapsedTime(StepResult result)
-        => $"{(int)result.ElapsedSeconds * 1000}ms";
+        => $"{(int)(result.ElapsedSeconds * 1000)}ms";
 
     public virtual string Stdout(StepPayload step)
     {
