@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
-using System.Web;
 using LibGit2Sharp;
 using LoongsonNeuq.AssignmentSubmit.Models;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
@@ -151,6 +150,9 @@ public class BranchSubmitter : ResultSubmitter
     public virtual string ElapsedTime(StepResult result)
         => $"{(int)(result.ElapsedSeconds * 1000)}ms";
 
+    private string UrlEncode(string url)
+        => url.Replace(" ", "%20");
+
     public virtual string Stdout(StepPayload step)
     {
         if (step.StandardOutputFile is null)
@@ -158,7 +160,7 @@ public class BranchSubmitter : ResultSubmitter
 
         string url = Path.Combine(step.OutputFolder!, step.StandardOutputFile);
 
-        return $"[{step.StandardOutputFile}]({HttpUtility.UrlEncode(url)})";
+        return $"[{step.StandardOutputFile}]({UrlEncode(url)})";
     }
 
     public virtual string Stderr(StepPayload step)
@@ -168,7 +170,7 @@ public class BranchSubmitter : ResultSubmitter
 
         string url = Path.Combine(step.OutputFolder!, step.StandardErrorFile);
 
-        return $"[{step.StandardErrorFile}]({HttpUtility.UrlEncode(url)})";
+        return $"[{step.StandardErrorFile}]({UrlEncode(url)})";
     }
 
     public virtual string PeakMemory(StepResult? result)
