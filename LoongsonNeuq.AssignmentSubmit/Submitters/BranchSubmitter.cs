@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Web;
 using LibGit2Sharp;
 using LoongsonNeuq.AssignmentSubmit.Models;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
@@ -155,7 +156,9 @@ public class BranchSubmitter : ResultSubmitter
         if (step.StandardOutputFile is null || GitHubBranchUrl is null)
             return "N/A";
 
-        return Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardOutputFile);
+        string url = Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardOutputFile);
+
+        return $"[{step.StandardOutputFile}]({HttpUtility.UrlEncode(url)})";
     }
 
     public virtual string Stderr(StepPayload step)
@@ -163,7 +166,9 @@ public class BranchSubmitter : ResultSubmitter
         if (step.StandardErrorFile is null || GitHubBranchUrl is null)
             return "N/A";
 
-        return Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardErrorFile);
+        string url = Path.Combine(GitHubBranchUrl, step.OutputFolder!, step.StandardErrorFile);
+
+        return $"[{step.StandardErrorFile}]({HttpUtility.UrlEncode(url)})";
     }
 
     public virtual string PeakMemory(StepResult? result)
