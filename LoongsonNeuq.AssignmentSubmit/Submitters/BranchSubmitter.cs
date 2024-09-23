@@ -380,5 +380,6 @@ public class BranchSubmitter : ResultSubmitter
 
         _logger.LogInformation("Results submitted successfully.");
         _logger.LogInformation($"View the results at: {Path.Combine(remoteUrl, "tree", BranchName)}");
+        _logger.LogInformation($"View the commit specific result at: {Path.Combine(remoteUrl, "tree", commit.Id.Sha)}");
     }
 }
