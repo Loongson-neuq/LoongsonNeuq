@@ -394,10 +394,12 @@ public class BranchSubmitter : ResultSubmitter
                 _logger.LogError($"Failed to push the results. Message: {e.Message}");
                 throw;
             }
+            finally
+            {
+                _logger.LogInformation("Results submitted successfully.");
+                _logger.LogInformation($"View the results at: {Path.Combine(remoteUrl, "tree", BranchName)}");
+                _logger.LogInformation($"View the commit specific result at: {Path.Combine(remoteUrl, "tree", commit.Id.Sha)}");
+            }
         }
-
-        _logger.LogInformation("Results submitted successfully.");
-        _logger.LogInformation($"View the results at: {Path.Combine(remoteUrl, "tree", BranchName)}");
-        _logger.LogInformation($"View the commit specific result at: {Path.Combine(remoteUrl, "tree", commit.Id.Sha)}");
     }
 }
