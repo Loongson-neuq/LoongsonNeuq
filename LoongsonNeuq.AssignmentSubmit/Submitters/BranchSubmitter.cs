@@ -134,8 +134,8 @@ public class BranchSubmitter : ResultSubmitter
         if (SubmitPayload.StepPayloads is null)
             return;
 
-        docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Passed | Stdout | Stderr |");
-        docBuilder.AppendLine("|------|-------|---------|-------------|-----|--------|--------|--------|");
+        docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Pass | Stdout | Stderr |");
+        docBuilder.AppendLine("|------|-------|---------|-------------|-----|------|--------|--------|");
 
         foreach (var step in SubmitPayload.StepPayloads)
         {
