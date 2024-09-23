@@ -133,8 +133,8 @@ public class BranchSubmitter : ResultSubmitter
         if (SubmitPayload.StepPayloads is null)
             return;
 
-        docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Pass | StdOut | StdErr |");
-        docBuilder.AppendLine("|:-----|:-----:|--------:|------------:|:---:|:----:|:------:|:------:|");
+        docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Passed | StdOut | StdErr |");
+        docBuilder.AppendLine("|:-----|:-----:|--------:|------------:|:---:|:------:|:------:|:------:|");
 
         foreach (var step in SubmitPayload.StepPayloads)
         {
@@ -200,7 +200,7 @@ public class BranchSubmitter : ResultSubmitter
     }
 
     public virtual string IsLTE(bool lte)
-        => lte ? "❗️" : string.Empty;
+        => lte ? "❗️" : "✔️";
 
     public virtual string IsPassed(bool failed)
         => failed ? "❌" : "✔️";
