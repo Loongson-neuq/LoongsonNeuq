@@ -156,7 +156,13 @@ public class BranchSubmitter : ResultSubmitter
     }
 
     public virtual string Score(StepPayload step)
-        => $"{step.Score}/{step.FullScore}";
+    {
+        // 0/0 is not readable
+        if (step.FullScore == 0)
+            return "N/A";
+
+        return $"{step.Score}/{step.FullScore}";
+    }
 
     public virtual string ElapsedTime(StepResult result)
         => $"{(int)(result.ElapsedSeconds * 1000)}ms";
