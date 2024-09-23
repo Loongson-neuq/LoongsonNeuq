@@ -115,11 +115,10 @@ public class BranchSubmitter : ResultSubmitter
                 else
                 {
                     var configUrl = Path.Combine(remoteUrl!, "blob", _gitHubActions.Sha!, ".assignment/config.json");
-                    docBuilder.AppendLine($"Auto grading was not enabled for this assignment, see [`config.json`]({configUrl}) for more info.\n");
+                    docBuilder.AppendLine($"**Auto grading was not enabled for this assignment, see [`config.json`]({configUrl}) for more info.**\n");
                 }
             }
         }
-        docBuilder.AppendLine();
 
         docBuilder.AppendLine("-----------");
  
