@@ -134,7 +134,7 @@ public class BranchSubmitter : ResultSubmitter
             return;
 
         docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Pass | StdOut | StdErr |");
-        docBuilder.AppendLine("|:-----|:-----:|--------:|------------:|:---:|:----:|:------:|-------:|");
+        docBuilder.AppendLine("|:-----|:-----:|--------:|------------:|:---:|:----:|:------:|:------:|");
 
         foreach (var step in SubmitPayload.StepPayloads)
         {
