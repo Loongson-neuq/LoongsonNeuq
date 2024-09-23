@@ -116,7 +116,7 @@ public class BranchSubmitter : ResultSubmitter
         docBuilder.AppendLine($"# Report for {AssignmentConfig.Name}\n");
         {
             docBuilder.AppendLine("| Property | Value |");
-            docBuilder.AppendLine("|----------|-------|");
+            docBuilder.AppendLine("|:--------:|-------|");
 
             string sha = SubmitPayload.RepoSha;
             string url = Path.Combine(remoteUrl!, "tree", sha);
