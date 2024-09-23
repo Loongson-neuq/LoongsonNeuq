@@ -134,8 +134,8 @@ public class BranchSubmitter : ResultSubmitter
         if (SubmitPayload.StepPayloads is null)
             return;
 
-        docBuilder.AppendLine("| Step | Score | Time | Peak Mem | LTE | Passed | Stdout | Stderr |");
-        docBuilder.AppendLine("|------|-------|------|----------|-----|--------|--------|--------|");
+        docBuilder.AppendLine("| Step | Score | Elapsed | Peak Memory | LTE | Passed | Stdout | Stderr |");
+        docBuilder.AppendLine("|------|-------|---------|-------------|-----|--------|--------|--------|");
 
         foreach (var step in SubmitPayload.StepPayloads)
         {
@@ -165,7 +165,7 @@ public class BranchSubmitter : ResultSubmitter
     }
 
     public virtual string ElapsedTime(StepResult result)
-        => $"{(int)(result.ElapsedSeconds * 1000)}ms";
+        => $"{(int)(result.ElapsedSeconds * 1000)} ms";
 
     private string UrlEncode(string url)
         => url.Replace(" ", "%20");
@@ -197,7 +197,7 @@ public class BranchSubmitter : ResultSubmitter
 
         double kbytes = result.PeakWorkingSet64.Value / 1024.0;
 
-        return $"{(int)kbytes}kb";
+        return $"{(int)kbytes} kb";
     }
 
     public virtual string IsLTE(bool lte)
