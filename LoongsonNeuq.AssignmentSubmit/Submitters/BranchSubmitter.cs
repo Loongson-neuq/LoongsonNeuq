@@ -134,7 +134,7 @@ public class BranchSubmitter : ResultSubmitter
         if (SubmitPayload.StepPayloads is null)
             return;
 
-        docBuilder.AppendLine("| Step | Score | Time | Peak Mem | LTE | Failed | Stdout | Stderr |");
+        docBuilder.AppendLine("| Step | Score | Time | Peak Mem | LTE | Passed | Stdout | Stderr |");
         docBuilder.AppendLine("|------|-------|------|----------|-----|--------|--------|--------|");
 
         foreach (var step in SubmitPayload.StepPayloads)
@@ -144,7 +144,7 @@ public class BranchSubmitter : ResultSubmitter
 
             var result = step.StepResult;
 
-            docBuilder.AppendLine($"| {result.StepConfig.Title} | {Score(step)} | {ElapsedTime(result)} | {PeakMemory(result)} | {result.ReachedTimeout} | {result.Failed} | {Stdout(step)} | {Stderr(step)} |");
+            docBuilder.AppendLine($"| {result.StepConfig.Title} | {Score(step)} | {ElapsedTime(result)} | {PeakMemory(result)} | {IsLTE(result.ReachedTimeout)} | {IsPassed(result.Failed)} | {Stdout(step)} | {Stderr(step)} |");
         }
 
         docBuilder.AppendLine();
@@ -199,6 +199,12 @@ public class BranchSubmitter : ResultSubmitter
 
         return $"{(int)kbytes}kb";
     }
+
+    public virtual string IsLTE(bool lte)
+        => lte ? "❗️" : string.Empty;
+
+    public virtual string IsPassed(bool failed)
+        => failed ? "❌" : "✔️";
 
     protected virtual void StageChanges()
     {
