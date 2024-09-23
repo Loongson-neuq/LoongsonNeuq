@@ -94,17 +94,38 @@ public class BranchSubmitter : ResultSubmitter
         File.WriteAllText(Path.Combine(repoRoot, "README.md"), readmeContent);
     }
 
+    private static string TimestampToFormattedString(long timestamp)
+    {
+        const string timezoneId = "China Standard Time";
+        TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(timezoneId);
+
+        DateTimeOffset dateTimeUtc = DateTimeOffset.FromUnixTimeSeconds(timestamp);
+        
+        DateTimeOffset dateTimeInTimeZone = TimeZoneInfo.ConvertTime(dateTimeUtc, timeZone);
+        
+        string offset = dateTimeInTimeZone.Offset.ToString(@"hh\:mm");
+        string timeZoneInfo = $"UTC{(dateTimeInTimeZone.Offset >= TimeSpan.Zero ? "+" : "-")}{offset}";
+        
+        return $"{dateTimeInTimeZone.ToString("yyyy-MM-dd HH:mm:ss")} {timeZoneInfo}";
+    }
+
     public virtual string GenerateMarkdownReport()
     {
         StringBuilder docBuilder = new();
 
-        docBuilder.AppendLine($"# Report for {AssignmentConfig.Name}");
+        docBuilder.AppendLine($"# Report for {AssignmentConfig.Name}\n");
         {
-            docBuilder.AppendLine();
+            docBuilder.AppendLine("| Property | Value |");
+            docBuilder.AppendLine("|----------|-------|");
 
-            docBuilder.AppendLine($"Commit: {SubmitPayload.RepoSha}\n");
-            docBuilder.AppendLine($"Timestamp: {SubmitPayload.Timestamp}\n");
-            docBuilder.AppendLine($"Assignment ID: {SubmitPayload.AssignmentId}\n");
+            string sha = SubmitPayload.RepoSha;
+            string url = Path.Combine(remoteUrl!, "tree", sha);
+
+            string submitTime = TimestampToFormattedString(SubmitPayload.Timestamp);
+
+            docBuilder.AppendLine($"| Commit | [{sha}]({url}) |");
+            docBuilder.AppendLine($"| Timestamp | {submitTime} |");
+            docBuilder.AppendLine($"| Assignment ID | {SubmitPayload.AssignmentId} |");
 
             docBuilder.AppendLine($"## Scores");
             {
