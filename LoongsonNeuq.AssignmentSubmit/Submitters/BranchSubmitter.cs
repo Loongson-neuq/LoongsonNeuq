@@ -194,7 +194,8 @@ public class BranchSubmitter : ResultSubmitter
         if (step.StandardOutputFile is null)
             return "N/A";
 
-        string url = Path.Combine(step.OutputFolder!, step.StandardOutputFile);
+        string sha = SubmitPayload.RepoSha;
+        string url = Path.Combine(Path.Combine(remoteUrl!, "tree", sha), step.OutputFolder!, step.StandardOutputFile);
 
         return $"[{step.StandardOutputFile}]({UrlEncode(url)})";
     }
