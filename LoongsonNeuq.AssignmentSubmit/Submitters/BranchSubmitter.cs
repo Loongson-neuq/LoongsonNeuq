@@ -1,11 +1,11 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using GitHub;
 using LibGit2Sharp;
 using LoongsonNeuq.AssignmentSubmit.Models;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
 using LoongsonNeuq.AutoGrader;
-using LoongsonNeuq.Common.Auth;
 using LoongsonNeuq.Common.Environments;
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +15,7 @@ public class BranchSubmitter : ResultSubmitter
 {
     private readonly ILogger _logger;
     private readonly GitHubActions _gitHubActions;
-    private readonly ITokenProvider _githubTokenProvider;
+    private readonly GitHubClient _githubClient;
 
     private readonly string? remoteUrl;
 
@@ -24,11 +24,11 @@ public class BranchSubmitter : ResultSubmitter
     public virtual string? GitHubBranchUrl => remoteUrl is not null ? Path.Combine(remoteUrl, "tree", BranchName)
         : null;
 
-    public BranchSubmitter(ILogger logger, GitHubActions gitHubActions, ITokenProvider githubTokenProvider)
+    public BranchSubmitter(ILogger logger, GitHubActions gitHubActions, GitHubClient gitHubClient)
     {
         _logger = logger;
         _gitHubActions = gitHubActions;
-        _githubTokenProvider = githubTokenProvider;
+        _githubClient = gitHubClient;
 
         remoteUrl = _gitHubActions.Repository is null
             ? null
@@ -415,10 +415,35 @@ public class BranchSubmitter : ResultSubmitter
             }
             finally
             {
+                string sha = commit.Id.Sha;
+                string branchUrl = Path.Combine(remoteUrl, "tree", BranchName);
+                string commitUrl = Path.Combine(remoteUrl, "tree", sha);
+
+                string shaShort = sha[..7];
+
                 _logger.LogInformation("Results submitted successfully.");
-                _logger.LogInformation($"View the results at: {Path.Combine(remoteUrl, "tree", BranchName)}");
-                _logger.LogInformation($"View the commit specific result at: {Path.Combine(remoteUrl, "tree", commit.Id.Sha)}");
+                _logger.LogInformation($"View the results at: {branchUrl}");
+                _logger.LogInformation($"View the commit specific result at: {commitUrl}");
+
+                CommentOnCommit($"Grading result for this commit is available at [{BranchName}({shaShort})]({commitUrl})");
             }
         }
+    }
+
+    public void CommentOnCommit(string message)
+    {
+        var commentBody = new GitHub.Repos.Item.Item.Commits.Item.Comments.CommentsPostRequestBody
+        {
+            Body = message
+        };
+
+        var splited = _gitHubActions.Repository!.Split('/');
+
+        string owner = splited[0];
+        string repo = splited[1];
+
+        string sha = _gitHubActions.Sha!;
+
+        _githubClient.Repos[owner][repo].Commits[sha].Comments.PostAsync(commentBody).Wait();
     }
 }
