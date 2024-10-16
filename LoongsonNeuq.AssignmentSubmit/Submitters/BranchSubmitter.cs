@@ -19,6 +19,8 @@ public class BranchSubmitter : ResultSubmitter
 
     private readonly string? remoteUrl;
 
+    private string? resultCommitSha = null;
+
     protected Repository repository = null!;
 
     public virtual string? GitHubBranchUrl => remoteUrl is not null ? Path.Combine(remoteUrl, "tree", BranchName)
@@ -189,13 +191,18 @@ public class BranchSubmitter : ResultSubmitter
     private string UrlEncode(string url)
         => url.Replace(" ", "%20");
 
+    private string urlPrefix => resultCommitSha switch
+    {
+        null => string.Empty,
+        _ => Path.Combine(remoteUrl!, "tree", resultCommitSha)
+    };
+
     public virtual string Stdout(StepPayload step)
     {
         if (step.StandardOutputFile is null)
             return "N/A";
 
-        string sha = SubmitPayload.RepoSha;
-        string url = Path.Combine(Path.Combine(remoteUrl!, "tree", sha), step.OutputFolder!, step.StandardOutputFile);
+        string url = Path.Combine(urlPrefix, step.OutputFolder!, step.StandardOutputFile);
 
         return $"[{step.StandardOutputFile}]({UrlEncode(url)})";
     }
@@ -397,6 +404,8 @@ public class BranchSubmitter : ResultSubmitter
                 + $"\n"
                 + $"    {commit.Message}"
             );
+
+            resultCommitSha = commit.Id.Sha;
 
             // This is idiot, we can't change after the commit 
             // SubmitPayload.InfoBranch = BranchName;
