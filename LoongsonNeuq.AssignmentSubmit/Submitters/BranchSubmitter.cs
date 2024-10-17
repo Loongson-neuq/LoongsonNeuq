@@ -212,7 +212,7 @@ public class BranchSubmitter : ResultSubmitter
         if (step.StandardErrorFile is null)
             return "N/A";
 
-        string url = Path.Combine(step.OutputFolder!, step.StandardErrorFile);
+        string url = Path.Combine(urlPrefix, step.OutputFolder!, step.StandardErrorFile);
 
         return $"[{step.StandardErrorFile}]({UrlEncode(url)})";
     }
