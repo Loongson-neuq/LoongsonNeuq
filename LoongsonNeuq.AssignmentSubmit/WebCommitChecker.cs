@@ -95,7 +95,7 @@ public class WebCommitChecker
 
         if (AllowedWebAction(committer) || AllowedWebAction(author))
         {
-            _logger.LogInformation("Allowed web action actor");   
+            _logger.LogInformation("Allowed web action actor");
             return false;
         }
 
@@ -138,14 +138,17 @@ public class WebCommitChecker
 
             try
             {
-                CommentOnCommit(commitDescriptor, 
-                    "# ⚠　WARNING ⚠\n" + 
+                CommentOnCommit(commitDescriptor,
+                    "# ⚠　WARNING ⚠\n" +
                     "## Web action detected!\n" +
-                    "## 检测到网页端提交！\n" + 
+                    "## 检测到网页端提交！\n" +
                     "### Please use git client to commit your changes.\n" +
                     "### 请使用 Git 客户端提交您的更改。\n" +
                     "### All your changes will be not be admitted.\n" +
-                    "### 所有更改将不会被接受。");
+                    "### 所有更改将不会被接受。\n" +
+                    "#### Continue to use web action may result in a force rollback.\n" +
+                    "#### 继续使用网页端提交可能导致代码被强制回滚。\n" +
+                    "*Kind remind from [LoongsonNeuq](https://github.com/Loongson-neuq/LoongsonNeuq) :)*");
             }
             catch (Exception)
             {
