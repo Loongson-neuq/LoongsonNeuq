@@ -120,6 +120,35 @@ public class WebCommitChecker
             _logger.LogError("  ");
             _logger.LogError("  All your changes will be not be admitted.");
             _logger.LogError("  所有更改将不会被接受。");
+            _logger.LogError("Debug info:");
+            _logger.LogError($"  Repository: {commitDescriptor.RepositoryOwner}/{commitDescriptor.RepositoryName}");
+            _logger.LogError($"  SHA: {commitDescriptor.Sha}");
+            _logger.LogError($"  Committer: {committer}");
+            _logger.LogError($"  Author: {author}");
+            _logger.LogError($"  Verification: {commit?.Verification?.Verified}");
+            _logger.LogError($"  Signature: {commit?.Verification?.Signature}");
+
+            CommitComment? comment = null;
+
+            try
+            {
+                CommentOnCommit(commitDescriptor, 
+                    "# ⚠　WARNING ⚠\n" + 
+                    "## Web action detected!\n" +
+                    "## 检测到网页端提交！\n" + 
+                    "### Please use git client to commit your changes.\n" +
+                    "### 请使用 Git 客户端提交您的更改。\n" +
+                    "### All your changes will be not be admitted.\n" +
+                    "### 所有更改将不会被接受。");
+            }
+            catch (Exception)
+            {
+            }
+
+            if (comment is null)
+            {
+                _logger.LogError("Failed to comment on commit");
+            }
 
             return true;
         }
@@ -130,6 +159,22 @@ public class WebCommitChecker
     private Commit? GetCommitInfo(CommitDescriptor commit)
     {
         return _githubClient.Repos[commit.RepositoryOwner][commit.RepositoryName].Commits[commit.Sha].GetAsync()
+            .ConfigureAwait(false).GetAwaiter().GetResult();
+    }
+
+    private CommitComment? CommentOnCommit(CommitDescriptor commit, string message)
+    {
+        var commentBody = new GitHub.Repos.Item.Item.Commits.Item.Comments.CommentsPostRequestBody
+        {
+            Body = message
+        };
+
+        string owner = commit.RepositoryOwner;
+        string repo = commit.RepositoryName;
+
+        string sha = commit.Sha;
+
+        return _githubClient.Repos[owner][repo].Commits[sha].Comments.PostAsync(commentBody)
             .ConfigureAwait(false).GetAwaiter().GetResult();
     }
 
