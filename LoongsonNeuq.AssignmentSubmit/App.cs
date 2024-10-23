@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Kiota.Abstractions.Serialization;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
 using System.Text.Json;
+using static LoongsonNeuq.AssignmentSubmit.WebCommitChecker;
 
 namespace LoongsonNeuq.AssignmentSubmit;
 
@@ -20,15 +21,17 @@ public class App
 
     private readonly GradingRunner _gradingRunner;
     private readonly ResultSubmitter _resultSubmitter;
+    private readonly WebCommitChecker _webCommitChecker;
     private SubmitPayload submitPayload = new SubmitPayload();
 
-    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter)
+    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker)
     {
         _logger = logger;
         _config = config;
         _gitHubActions = gitHubActions;
         _gradingRunner = gradingRunner;
         _resultSubmitter = resultSubmitter;
+        _webCommitChecker = webCommitChecker;
     }
 
     private ExitCode fillSubmitPayload()
@@ -102,6 +105,20 @@ public class App
         {
             _logger.LogError("Failed to fill submit payload, exiting");
             return fill;
+        }
+
+        if (!_webCommitChecker.CheckCommit(new CommitDescriptor
+            {
+                RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
+                RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
+                Sha = _gitHubActions.Sha!
+            }))
+        {
+            _logger.LogError("Nothing will be submitted, exiting");
+
+            // TODO: Maybe call git client to overwrite the last commit
+
+            return ExitCode.WebActionDenied;
         }
 
         if (_config.AutoGrade.Enabled)
