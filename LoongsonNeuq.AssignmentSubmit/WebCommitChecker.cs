@@ -94,7 +94,7 @@ public class WebCommitChecker
         var author = payload?.Author?.SimpleUser?.Name;
 
         if (AllowedWebAction(committer) || AllowedWebAction(author))
-            return true;
+            return false;
 
         if (commit is null)
         {
@@ -104,7 +104,7 @@ public class WebCommitChecker
 
         // Commits from git client were mostly not signed with GPG key
         if (commit?.Verification is null || commit?.Verification?.Verified is true)
-            return true;
+            return false;
 
         bool detectedWebAction = IsWebAction(null!) || UserCheck(commit!);
 
