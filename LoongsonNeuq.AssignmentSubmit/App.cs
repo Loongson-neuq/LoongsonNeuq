@@ -98,15 +98,7 @@ public class App
             _logger.LogError("Not running in CI, exiting");
             return ExitCode.NotInCI;
         }
-
-        var fill = fillSubmitPayload();
-
-        if (fill != ExitCode.Success)
-        {
-            _logger.LogError("Failed to fill submit payload, exiting");
-            return fill;
-        }
-
+        
         // TODO: not check web action for CPU assignment
         if (!_config.AssignmentType.Contains("CPU", StringComparison.OrdinalIgnoreCase))
         {
@@ -123,6 +115,14 @@ public class App
 
                 return ExitCode.WebActionDenied;
             }
+        }
+
+        var fill = fillSubmitPayload();
+
+        if (fill != ExitCode.Success)
+        {
+            _logger.LogError("Failed to fill submit payload, exiting");
+            return fill;
         }
 
         if (_config.AutoGrade.Enabled)
