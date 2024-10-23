@@ -255,36 +255,11 @@ public class BranchSubmitter : ResultSubmitter
     {
         // there's seems issues in string marshaller in libgit2sharp
         // All strings are marshalled as empty strings, so we use git command instead
-        RunGitCommand("git", $"config user.name \"{GitHubActionBot}\"");
-        RunGitCommand("git", $"config user.email \"{GitHubActionEmail}\"");
+        GitHelper.RunGitCommand(_logger, $"config user.name \"{GitHubActionBot}\"");
+        GitHelper.RunGitCommand(_logger, $"config user.email \"{GitHubActionEmail}\"");
 
         // repository.Config.Set("user.name", GitHubActionBot);
         // repository.Config.Set("user.email", GitHubActionEmail);
-    }
-
-    protected void RunGitCommand(string gitFile, string args, string? WorkingDirectory = null)
-    {
-        _logger.LogInformation($"Running git command: {gitFile} {args}");
-
-        Process git = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = gitFile,
-                Arguments = args,
-                UseShellExecute = true,
-                CreateNoWindow = true,
-                WorkingDirectory = WorkingDirectory ?? repository.Info.WorkingDirectory
-            }
-        };
-
-        git.Start();
-        git.WaitForExit();
-
-        if (git.ExitCode != 0)
-        {
-            throw new Exception($"Failed to run git command: {git} {args}");
-        }
     }
 
     protected virtual Commit Commit()
@@ -294,7 +269,7 @@ public class BranchSubmitter : ResultSubmitter
         var sha = _gitHubActions.Sha;
 
         // AoT deployed libgit2sharp fails include commit message, so we use git command instead
-        RunGitCommand("git", $"commit -m \"Grading result for {sha}\"");
+        GitHelper.RunGitCommand(_logger, $"commit -m \"Grading result for {sha}\"");
 
         var commit = repository.Branches[BranchName].Commits.MaxBy(c => c.Committer.When);
 
@@ -314,15 +289,12 @@ public class BranchSubmitter : ResultSubmitter
 
         string args = $"push {RemoteName} {RemoteRef} --force";
 
-        RunGitCommand("git", args);
+        GitHelper.RunGitCommand(_logger, args);
     }
-
-    public virtual string GetRepoPath()
-        => _gitHubActions.Workspace ?? Directory.GetCurrentDirectory();
 
     protected virtual void CheckoutToNewBranch()
     {
-        RunGitCommand("git", $"checkout --orphan {BranchName}");
+        GitHelper.RunGitCommand(_logger, $"checkout --orphan {BranchName}");
     }
 
     public virtual void SetupRepo()
@@ -363,7 +335,7 @@ public class BranchSubmitter : ResultSubmitter
             throw new InvalidOperationException("No repository found. Make sure the environment variable GITHUB_REPOSITORY is set.");
         }
 
-        string repoPath = GetRepoPath();
+        string repoPath = GitHelper.CurrentRepo!;
         _logger.LogInformation($"Using directory to construct the repo: {repoPath}");
 
         if (!Directory.Exists(repoPath))
@@ -378,6 +350,7 @@ public class BranchSubmitter : ResultSubmitter
 
         using (repository = new Repository(repoPath))
         {
+            GitHelper.CurrentRepo = repository.Info.WorkingDirectory;
             SetupRepo();
 
             if (repository.Network.Remotes[RemoteName] is null)

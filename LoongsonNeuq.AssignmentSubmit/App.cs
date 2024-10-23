@@ -99,13 +99,21 @@ public class App
             return ExitCode.NotInCI;
         }
 
+        GitHelper.InitCurrentRepoWithDefault();
+
         if (_webCommitChecker.CheckCommit(new CommitDescriptor(
             _gitHubActions.Repository!,
             _gitHubActions.Sha!)))
         {
-            _logger.LogError("Nothing will be submitted, exiting");
+            _logger.LogError("Nothing will be submitted");
+            // _logger.LogError("Waiting for 30 seconds before force rollback");
 
-            // TODO: Maybe call git client to overwrite the last commit
+            // Task.Delay(TimeSpan.FromSeconds(30)).Wait();
+
+            ForceRollback();
+            // TODO
+            // 由于新提交的 commit 会被撤回，一切信息都会丢失
+            // 在原 commit 上回复一个被撤回提交的可访问 url，可以临时查看提交的修改
 
             return ExitCode.WebActionDenied;
         }
@@ -156,5 +164,18 @@ public class App
         }
 
         return ExitCode.Success;
+    }
+
+    private void ForceRollback()
+    {
+        try
+        {
+            GitHelper.RunGitCommand(_logger, "reset --hard HEAD^");
+            GitHelper.RunGitCommand(_logger, "push --force");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Failed to force rollback: {e.Message}");
+        }
     }
 }
