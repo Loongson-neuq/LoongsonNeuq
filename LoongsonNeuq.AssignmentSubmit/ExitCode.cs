@@ -9,4 +9,5 @@ public enum ExitCode : int
     FailedToGetAssignmentRepo = 4,
     FailedToGetRepoSha = 5,
     RequiredStepFailed = 6,
+    WebActionDenied = 7,
 }

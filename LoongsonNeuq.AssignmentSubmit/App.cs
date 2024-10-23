@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using Microsoft.Kiota.Abstractions.Serialization;
 using LoongsonNeuq.AssignmentSubmit.Submitters;
 using System.Text.Json;
+using static LoongsonNeuq.AssignmentSubmit.WebCommitChecker;
 
 namespace LoongsonNeuq.AssignmentSubmit;
 
@@ -20,15 +21,17 @@ public class App
 
     private readonly GradingRunner _gradingRunner;
     private readonly ResultSubmitter _resultSubmitter;
+    private readonly WebCommitChecker _webCommitChecker;
     private SubmitPayload submitPayload = new SubmitPayload();
 
-    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter)
+    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker)
     {
         _logger = logger;
         _config = config;
         _gitHubActions = gitHubActions;
         _gradingRunner = gradingRunner;
         _resultSubmitter = resultSubmitter;
+        _webCommitChecker = webCommitChecker;
     }
 
     private ExitCode fillSubmitPayload()
@@ -96,6 +99,24 @@ public class App
             return ExitCode.NotInCI;
         }
 
+        // TODO: not check web action for CPU assignment
+        if (!_config.AssignmentType.Contains("CPU", StringComparison.OrdinalIgnoreCase))
+        {
+            if (_webCommitChecker.CheckCommit(new CommitDescriptor
+            {
+                RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
+                RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
+                Sha = _gitHubActions.Sha!
+            }))
+            {
+                _logger.LogError("Nothing will be submitted, exiting");
+
+                // TODO: Maybe call git client to overwrite the last commit
+
+                return ExitCode.WebActionDenied;
+            }
+        }
+
         var fill = fillSubmitPayload();
 
         if (fill != ExitCode.Success)
@@ -119,11 +140,11 @@ public class App
         _resultSubmitter.SubmitPayload = submitPayload;
 
         _resultSubmitter.SubmitResult();
-        
-        bool hasRequiredStepFailed = submitPayload.StepPayloads is not null 
+
+        bool hasRequiredStepFailed = submitPayload.StepPayloads is not null
             && submitPayload.StepPayloads.Any(
                 step => step?.StepConfig.Required is true && step.Failed);
-        
+
         if (hasRequiredStepFailed)
         {
             _logger.LogError("Some required steps failed:");
