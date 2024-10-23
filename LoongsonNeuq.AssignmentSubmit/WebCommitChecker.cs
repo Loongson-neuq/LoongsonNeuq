@@ -11,8 +11,9 @@ public class WebCommitChecker
     private readonly GitHubClient _githubClient;
     private readonly ILogger _logger;
 
+    // GitHub's GPG public key, used to sign on web actions
     // B5690EEEBB952194
-    private const long GITHUB_WEB_GPG_PUBLIC_KEY = -5374748261777858156;
+    private const long GITHUB_WEB_GPG_PUBLIC_KEYID = -5374748261777858156;
 
     private static readonly string[] web_action_whitelist = new string[]
     {
@@ -37,7 +38,7 @@ public class WebCommitChecker
                 PgpSignatureList pgpSignatureList = (PgpSignatureList)pgpFact.NextPgpObject();
                 PgpSignature pgpSignatureObject = pgpSignatureList[0];
 
-                return pgpSignatureObject.KeyId == GITHUB_WEB_GPG_PUBLIC_KEY;
+                return pgpSignatureObject.KeyId == GITHUB_WEB_GPG_PUBLIC_KEYID;
             }
         }
         catch (Exception e)
