@@ -192,5 +192,17 @@ public class WebCommitChecker
         public string RepositoryOwner { get; set; }
         public string RepositoryName { get; set; }
         public string Sha { get; set; }
+        
+        public CommitDescriptor(string repositoryOwner, string repositoryName, string sha)
+        {
+            RepositoryOwner = repositoryOwner;
+            RepositoryName = repositoryName;
+            Sha = sha;
+        }
+
+        public CommitDescriptor(string repository, string commit)
+            : this(repository.Split('/').First(), repository.Split('/').Last(), commit)
+        {
+        }
     }
 }

@@ -99,12 +99,9 @@ public class App
             return ExitCode.NotInCI;
         }
 
-        if (_webCommitChecker.CheckCommit(new CommitDescriptor
-        {
-            RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
-            RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
-            Sha = _gitHubActions.Sha!
-        }))
+        if (_webCommitChecker.CheckCommit(new CommitDescriptor(
+            _gitHubActions.Repository!,
+            _gitHubActions.Sha!)))
         {
             _logger.LogError("Nothing will be submitted, exiting");
 
