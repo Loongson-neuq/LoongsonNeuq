@@ -21,6 +21,7 @@ services.AddTransient<GradingRunner>();
 
 services.AddSingleton<GitHubActions>();
 services.AddSingleton<App>();
+services.AddSingleton<WebCommitChecker>();
 
 if (args.Any(arg => arg is "--debug" or "-d"))
 {
