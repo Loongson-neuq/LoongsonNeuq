@@ -94,7 +94,10 @@ public class WebCommitChecker
         var author = payload?.Author?.SimpleUser?.Name;
 
         if (AllowedWebAction(committer) || AllowedWebAction(author))
+        {
+            _logger.LogInformation("Allowed web action actor");   
             return false;
+        }
 
         if (commit is null)
         {
@@ -103,8 +106,11 @@ public class WebCommitChecker
         }
 
         // Commits from git client were mostly not signed with GPG key
-        if (commit?.Verification is null || commit?.Verification?.Verified is true)
+        if (commit?.Verification is null || commit?.Verification?.Verified is false)
+        {
+            _logger.LogInformation("Commit is not verified");
             return false;
+        }
 
         bool detectedWebAction = IsWebAction(null!) || UserCheck(commit!);
 
