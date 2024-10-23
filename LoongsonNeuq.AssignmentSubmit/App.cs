@@ -99,22 +99,18 @@ public class App
             return ExitCode.NotInCI;
         }
 
-        // TODO: not check web action for CPU assignment
-        if (!_config.AssignmentType.Contains("CPU", StringComparison.OrdinalIgnoreCase))
+        if (_webCommitChecker.CheckCommit(new CommitDescriptor
         {
-            if (_webCommitChecker.CheckCommit(new CommitDescriptor
-            {
-                RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
-                RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
-                Sha = _gitHubActions.Sha!
-            }))
-            {
-                _logger.LogError("Nothing will be submitted, exiting");
+            RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
+            RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
+            Sha = _gitHubActions.Sha!
+        }))
+        {
+            _logger.LogError("Nothing will be submitted, exiting");
 
-                // TODO: Maybe call git client to overwrite the last commit
+            // TODO: Maybe call git client to overwrite the last commit
 
-                return ExitCode.WebActionDenied;
-            }
+            return ExitCode.WebActionDenied;
         }
 
         var fill = fillSubmitPayload();
