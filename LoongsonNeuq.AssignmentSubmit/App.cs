@@ -98,11 +98,11 @@ public class App
             _logger.LogError("Not running in CI, exiting");
             return ExitCode.NotInCI;
         }
-        
+
         // TODO: not check web action for CPU assignment
         if (!_config.AssignmentType.Contains("CPU", StringComparison.OrdinalIgnoreCase))
         {
-            if (!_webCommitChecker.CheckCommit(new CommitDescriptor
+            if (_webCommitChecker.CheckCommit(new CommitDescriptor
             {
                 RepositoryName = _gitHubActions.Repository!.Split('/').Last(),
                 RepositoryOwner = _gitHubActions.Repository.Split('/').First(),
@@ -140,11 +140,11 @@ public class App
         _resultSubmitter.SubmitPayload = submitPayload;
 
         _resultSubmitter.SubmitResult();
-        
-        bool hasRequiredStepFailed = submitPayload.StepPayloads is not null 
+
+        bool hasRequiredStepFailed = submitPayload.StepPayloads is not null
             && submitPayload.StepPayloads.Any(
                 step => step?.StepConfig.Required is true && step.Failed);
-        
+
         if (hasRequiredStepFailed)
         {
             _logger.LogError("Some required steps failed:");
