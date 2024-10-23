@@ -134,7 +134,6 @@ public class WebCommitChecker
             _logger.LogError($"  Verification: {commit?.Verification?.Verified}");
             _logger.LogError($"  Signature: {commit?.Verification?.Signature}");
 
-            CommitComment? comment = null;
 
             try
             {
@@ -151,10 +150,6 @@ public class WebCommitChecker
                     "*Kind remind from [LoongsonNeuq](https://github.com/Loongson-neuq/LoongsonNeuq) :)*");
             }
             catch (Exception)
-            {
-            }
-
-            if (comment is null)
             {
                 _logger.LogError("Failed to comment on commit");
             }
