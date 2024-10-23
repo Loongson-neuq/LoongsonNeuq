@@ -90,8 +90,8 @@ public class WebCommitChecker
         }
 
         var commit = payload.CommitProp;
-        var committer = payload.Committer?.SimpleUser?.Name;
-        var author = payload?.Author?.SimpleUser?.Name;
+        var committer = payload.Committer?.SimpleUser?.Login;
+        var author = payload?.Author?.SimpleUser?.Login;
 
         if (AllowedWebAction(committer) || AllowedWebAction(author))
         {
