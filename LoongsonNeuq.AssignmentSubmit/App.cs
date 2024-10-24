@@ -99,14 +99,13 @@ public class App
             return ExitCode.NotInCI;
         }
 
+        GitHelper.InitCurrentRepoWithDefault();
+
         if (_webCommitChecker.CheckCommit(new CommitDescriptor(
             _gitHubActions.Repository!,
             _gitHubActions.Sha!)))
         {
-            _logger.LogError("Nothing will be submitted, exiting");
-
-            // TODO: Maybe call git client to overwrite the last commit
-
+            _logger.LogError("Nothing will be submitted");
             return ExitCode.WebActionDenied;
         }
 
