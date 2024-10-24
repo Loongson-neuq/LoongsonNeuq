@@ -101,6 +101,9 @@ public class ForceRollbackContext
             CreateRemovedFile(fullpath, diff);
         }
 
+        _logger.LogInformation("Setting up committer info");
+        GitHelper.SetupGitConfig(_logger);
+
         _logger.LogInformation("Staging all files...");
         StageAllFiles();
 

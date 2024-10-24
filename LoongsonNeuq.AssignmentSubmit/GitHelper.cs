@@ -19,6 +19,18 @@ public class GitHelper
 
         return CurrentRepo;
     }
+    
+    public const string GitHubActionBot = "github-actions[bot]";
+    public const string GitHubActionEmail = "github-actions[bot]@users.noreply.github.com";
+
+    public static void SetupGitConfig(ILogger logger)
+    {
+        // there's seems issues in string marshaller in libgit2sharp
+        // All strings are marshalled as empty strings, so we use git command instead
+        GitHelper.RunGitCommand(logger, $"config user.name \"{GitHubActionBot}\"");
+        GitHelper.RunGitCommand(logger, $"config user.email \"{GitHubActionEmail}\"");
+    }
+
 
     public static void RunGitCommand(ILogger logger, string args, string? WorkingDirectory = null, string gitFile = "git")
     {

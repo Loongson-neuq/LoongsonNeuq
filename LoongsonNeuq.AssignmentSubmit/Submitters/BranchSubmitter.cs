@@ -242,29 +242,15 @@ public class BranchSubmitter : ResultSubmitter
 
     protected virtual string RemoteName => DefaultRemoteName;
 
-    public const string GitHubActionBot = "github-actions[bot]";
-    public const string GitHubActionEmail = "github-actions[bot]@users.noreply.github.com";
-
     protected virtual Signature Author
-        => new(GitHubActionBot, GitHubActionEmail, DateTime.Now);
+        => new(GitHelper.GitHubActionBot, GitHelper.GitHubActionEmail, DateTime.Now);
 
     protected virtual Signature Committer
         => Author;
 
-    private void SetupGitConfig()
-    {
-        // there's seems issues in string marshaller in libgit2sharp
-        // All strings are marshalled as empty strings, so we use git command instead
-        GitHelper.RunGitCommand(_logger, $"config user.name \"{GitHubActionBot}\"");
-        GitHelper.RunGitCommand(_logger, $"config user.email \"{GitHubActionEmail}\"");
-
-        // repository.Config.Set("user.name", GitHubActionBot);
-        // repository.Config.Set("user.email", GitHubActionEmail);
-    }
-
     protected virtual Commit Commit()
     {
-        SetupGitConfig();
+        GitHelper.SetupGitConfig(_logger);
 
         var sha = _gitHubActions.Sha;
 
