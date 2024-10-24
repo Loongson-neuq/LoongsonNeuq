@@ -15,6 +15,8 @@ public class WebCommitChecker
     // B5690EEEBB952194
     private const long GITHUB_WEB_GPG_PUBLIC_KEYID = -5374748261777858156;
 
+    public Commit? LatestPayload { get; private set; }
+
     private static readonly string[] web_action_whitelist = new string[]
     {
         "github-actions[bot]",
@@ -82,6 +84,7 @@ public class WebCommitChecker
         }
 
         var payload = GetCommitInfo(commitDescriptor);
+        LatestPayload = payload;
 
         if (payload == null)
         {
@@ -159,6 +162,18 @@ public class WebCommitChecker
                 _logger.LogError("Failed to comment on commit");
             }
 
+            _logger.LogWarning("Force rollback this commit");
+
+            try
+            {
+                var rollbackContext = new ForceRollbackContext(_logger, payload);
+                rollbackContext.RollbackLocalFiles();
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Failed to rollback commit");
+            }
+
             return true;
         }
 
@@ -192,7 +207,7 @@ public class WebCommitChecker
         public string RepositoryOwner { get; set; }
         public string RepositoryName { get; set; }
         public string Sha { get; set; }
-        
+
         public CommitDescriptor(string repositoryOwner, string repositoryName, string sha)
         {
             RepositoryOwner = repositoryOwner;
