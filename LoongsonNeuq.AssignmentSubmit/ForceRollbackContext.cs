@@ -69,7 +69,7 @@ public class ForceRollbackContext
             FetchOneMoreDepth();
 
             _logger.LogDebug("Git History:");
-            GitHelper.RunGitCommand(_logger, "log");
+            GitHelper.RunGitCommand(_logger, "log -q");
 
             _logger.LogInformation("Rolling back local files...");
             RollbackCommit();
@@ -103,6 +103,9 @@ public class ForceRollbackContext
 
         _logger.LogInformation("Staging all files...");
         StageAllFiles();
+
+        _logger.LogInformation("Commiting changes");
+        CreateRevertCommit();
 
         _logger.LogInformation("Force pushing rollback...");
         ForcePushRollback();
