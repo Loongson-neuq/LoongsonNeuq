@@ -115,7 +115,7 @@ public class WebCommitChecker
             return false;
         }
 
-        bool detectedWebAction = IsWebAction(null!) || UserCheck(commit!);
+        bool detectedWebAction = IsWebAction(commit?.Verification?.Signature) || UserCheck(commit!);
 
         if (detectedWebAction)
         {
