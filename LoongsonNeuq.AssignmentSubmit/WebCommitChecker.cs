@@ -93,8 +93,8 @@ public class WebCommitChecker
         }
 
         var commit = payload.CommitProp;
-        var committer = payload.Committer?.SimpleUser?.Login;
-        var author = payload?.Author?.SimpleUser?.Login;
+        var committer = commit?.Committer?.Name;
+        var author = commit?.Author?.Name;
 
         if (AllowedWebAction(committer) || AllowedWebAction(author))
         {
@@ -137,7 +137,6 @@ public class WebCommitChecker
             _logger.LogError($"  Verification: {commit?.Verification?.Verified}");
             _logger.LogError($"  Signature: {commit?.Verification?.Signature}");
 
-            CommitComment? comment = null;
 
             try
             {
@@ -154,10 +153,6 @@ public class WebCommitChecker
                     "*Kind remind from [LoongsonNeuq](https://github.com/Loongson-neuq/LoongsonNeuq) :)*");
             }
             catch (Exception)
-            {
-            }
-
-            if (comment is null)
             {
                 _logger.LogError("Failed to comment on commit");
             }
