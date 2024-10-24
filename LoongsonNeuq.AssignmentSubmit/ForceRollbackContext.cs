@@ -41,7 +41,7 @@ public class ForceRollbackContext
     }
 
     public virtual void RollbackCommit()
-        => GitHelper.RunGitCommand(_logger, "reset --soft HEAD^");
+        => GitHelper.RunGitCommand(_logger, $"reset --soft HEAD^");
 
     public virtual void StageAllFiles()
         => GitHelper.RunGitCommand(_logger, "add .");
@@ -56,12 +56,25 @@ public class ForceRollbackContext
     public virtual void CreateRevertCommit()
         => GitHelper.RunGitCommand(_logger, $"commit -m \"Revert commit {new GitHubActions().Sha} for using web UI\"");
 
+    public virtual void FetchOneMoreDepth()
+        => GitHelper.RunGitCommand(_logger, "fetch --depth=2");
+
     public void RollbackLocalFiles()
     {
         Debug.Assert(GitHelper.CurrentRepo is not null);
 
-        _logger.LogInformation("Rolling back local files...");
-        RollbackCommit();
+        try
+        {
+            _logger.LogInformation("Fetch parent commit");
+            FetchOneMoreDepth();
+
+            _logger.LogInformation("Rolling back local files...");
+            RollbackCommit();
+        }
+        catch (Exception)
+        {
+            _logger.LogWarning("Failed to fetch parent commit or roll back to the commit");
+        }
 
         if (_commit is null)
             throw new InvalidOperationException("Commit payload is null");
