@@ -57,7 +57,7 @@ public class ForceRollbackContext
         => GitHelper.RunGitCommand(_logger, $"commit -m \"Revert commit {new GitHubActions().Sha} for using web UI\"");
 
     public virtual void FetchOneMoreDepth()
-        => GitHelper.RunGitCommand(_logger, "fetch --depth=2");
+        => GitHelper.RunGitCommand(_logger, "pull --depth=2");
 
     public void RollbackLocalFiles()
     {
@@ -67,6 +67,9 @@ public class ForceRollbackContext
         {
             _logger.LogInformation("Fetch parent commit");
             FetchOneMoreDepth();
+
+            _logger.LogDebug("Git History:");
+            GitHelper.RunGitCommand(_logger, "log");
 
             _logger.LogInformation("Rolling back local files...");
             RollbackCommit();
