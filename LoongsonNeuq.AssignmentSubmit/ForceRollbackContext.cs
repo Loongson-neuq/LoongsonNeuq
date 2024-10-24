@@ -43,8 +43,8 @@ public class ForceRollbackContext
     public virtual void RollbackCommit()
         => GitHelper.RunGitCommand(_logger, $"reset --soft HEAD^");
 
-    public virtual void StageAllFiles()
-        => GitHelper.RunGitCommand(_logger, "add .");
+    public virtual void StageAllFile(string fileName)
+        => GitHelper.RunGitCommand(_logger, $"add {fileName}");
 
     public virtual string Ref => new GitHubActions().Ref!;
 
@@ -87,6 +87,9 @@ public class ForceRollbackContext
 
         List<DiffEntry> diffs = _commit.Files!;
 
+        _logger.LogInformation("Setting up committer info");
+        GitHelper.SetupGitConfig(_logger);
+
         _logger.LogInformation("Rolling back local files...");
         foreach (var diff in diffs)
         {
@@ -99,13 +102,10 @@ public class ForceRollbackContext
             var fullpath = Path.Combine(GitHelper.CurrentRepo, fileName);
 
             CreateRemovedFile(fullpath, diff);
+
+            _logger.LogInformation($"Staging {fileName}");
+            StageAllFile(fileName);
         }
-
-        _logger.LogInformation("Setting up committer info");
-        GitHelper.SetupGitConfig(_logger);
-
-        _logger.LogInformation("Staging all files...");
-        StageAllFiles();
 
         _logger.LogInformation("Commiting changes");
         CreateRevertCommit();
