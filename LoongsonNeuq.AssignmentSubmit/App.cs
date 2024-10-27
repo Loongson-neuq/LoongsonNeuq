@@ -171,7 +171,7 @@ public class App
         }
 
         if (repo.TemplateRepository is null)
-            return true;
+            return false;
 
         if (repo.TemplateRepository.FullName == "Loongson-neuq/AssignmentTemplate")
             return true;
