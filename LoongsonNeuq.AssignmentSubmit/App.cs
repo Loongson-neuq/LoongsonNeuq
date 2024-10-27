@@ -22,9 +22,10 @@ public class App
     private readonly GradingRunner _gradingRunner;
     private readonly ResultSubmitter _resultSubmitter;
     private readonly WebCommitChecker _webCommitChecker;
+    private readonly GitHubClient _gitHubClient;
     private SubmitPayload submitPayload = new SubmitPayload();
 
-    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker)
+    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker, GitHubClient gitHubClient)
     {
         _logger = logger;
         _config = config;
@@ -32,6 +33,9 @@ public class App
         _gradingRunner = gradingRunner;
         _resultSubmitter = resultSubmitter;
         _webCommitChecker = webCommitChecker;
+        _gitHubClient = gitHubClient;
+
+        BypassSubmit = new(() => ShouldBypassSubmit());
     }
 
     private ExitCode fillSubmitPayload()
@@ -79,17 +83,9 @@ public class App
             return ExitCode.ConfigError;
         }
 
-        // Don't submit if running on AssignmentTemplate
-        if (_gitHubActions.Repository == "Loongson-neuq/AssignmentTemplate")
+        if (BypassSubmit.Value)
         {
-            _logger.LogInformation("Running on AssignmentTemplate, exiting");
-            return ExitCode.Success;
-        }
-
-        // FIXME: This is not adequate, we should check if the repo is a template repo
-        if (_gitHubActions.Actor == "github-classroom[bot]")
-        {
-            _logger.LogInformation("Actor is 'github-classroom[bot]', exiting");
+            _logger.LogDebug("Bypassing submit matched");
             return ExitCode.Success;
         }
 
@@ -155,5 +151,38 @@ public class App
         }
 
         return ExitCode.Success;
+    }
+
+    private readonly Lazy<bool> BypassSubmit;
+
+    private bool ShouldBypassSubmit()
+    {
+        string[] repository = _gitHubActions.Repository!.Split('/');
+        string owner = repository[0];
+        string repoName = repository[1];
+
+        var repo = _gitHubClient.Repos[owner][repoName].GetAsync().GetAwaiter().GetResult();
+
+        // Don't know what should be done here
+        if (repo is null)
+        {
+            _logger.LogWarning("Failed to get repo info");
+            return true;
+        }
+
+        if (repo.TemplateRepository is null)
+            return true;
+
+        if (repo.TemplateRepository.FullName == "Loongson-neuq/AssignmentTemplate")
+            return true;
+
+        if (repo.IsTemplate is true)
+            return true;
+
+        if (repo.Fork is true)
+            return false;
+
+        _logger.LogWarning("Unknown repo type, bypassing web action check");
+        return false;
     }
 }
