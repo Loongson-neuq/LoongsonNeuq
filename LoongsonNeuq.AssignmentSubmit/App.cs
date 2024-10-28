@@ -179,10 +179,10 @@ public class App
         if (repo.IsTemplate is true)
             return true;
 
-        if (repo.Fork is true)
-            return false;
+        if (repo.Fork is false)
+            return true;
 
-        _logger.LogWarning("Unknown repo type, bypassing web action check");
+        // _logger.LogWarning("Unknown repo type, bypassing web action check");
         return false;
     }
 }
