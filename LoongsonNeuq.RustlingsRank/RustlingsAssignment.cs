@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using GitHub;
 using GitHub.Models;
+using LoongsonNeuq.AssignmentSubmit;
 using LoongsonNeuq.AssignmentSubmit.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Kiota.Abstractions;
@@ -135,7 +136,7 @@ public class RustlingsAssignment
     {
         try
         {
-            return JsonSerializer.Deserialize<SubmitPayload>(content);
+            return JsonSerializer.Deserialize(content, SourceGenerationContext.Default.SubmitPayload);
         }
         catch (JsonException)
         {
