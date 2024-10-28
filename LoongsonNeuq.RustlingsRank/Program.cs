@@ -116,6 +116,6 @@ public static class AssignmentComparer
         var aLogin = a.Assignment.Students?.First().Login;
         var bLogin = b.Assignment.Students?.First().Login;
 
-        return -string.Compare(aLogin, bLogin, StringComparison.Ordinal);
+        return string.Compare(aLogin, bLogin, StringComparison.Ordinal);
     }
 }
