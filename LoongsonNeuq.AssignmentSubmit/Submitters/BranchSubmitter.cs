@@ -346,7 +346,7 @@ public class BranchSubmitter : ResultSubmitter
                 repository.Network.Remotes.Add(RemoteName, remoteUrl);
             }
 
-            _logger.LogInformation($"Remote repository: {repository.Network.Remotes[RemoteName].Url");
+            _logger.LogInformation($"Remote repository: {repository.Network.Remotes[RemoteName].Url}");
 
             _logger.LogInformation("Generating and storing results...");
             GenerateAndStoreResults(repoPath);
