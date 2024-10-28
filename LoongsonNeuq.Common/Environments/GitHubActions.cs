@@ -101,6 +101,7 @@ public class GitHubActions
     public bool IsPullRequest
         => Environment.GetEnvironmentVariable("GITHUB_EVENT_NAME") == "pull_request";
 
+    // FIXME: This is not correct, the format is 'refs/pull/<pr_number>/merge'
     public int? PrNumber => !IsPullRequest ? null : int.TryParse(Ref!.Split('/').Last(), out var number) ? number : null;
 
     public string RepositoryOwnerName => Repository!.Split('/').First();
