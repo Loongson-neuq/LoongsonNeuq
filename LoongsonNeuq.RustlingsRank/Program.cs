@@ -85,23 +85,24 @@ StringBuilder BuildMarkdownTable(IReadOnlyList<FinishedAssignment> finisheds)
 
 string UpdateTable(string oldReadme, string newTable)
 {
-    int startIndex = oldReadme.IndexOf(MarkdownTableStartTag);
-    int endIndex = oldReadme.IndexOf(MarkdownTableEndTag);
+    var oldlines = oldReadme.Replace("\r", "").Split('\n');
 
-    if (startIndex == -1 || endIndex == -1)
+    var startTagLineIndex = Array.FindIndex(oldlines, x => x.Contains(MarkdownTableStartTag));
+    var endTagLineIndex = Array.FindIndex(oldlines, x => x.Contains(MarkdownTableEndTag));
+
+    if (startTagLineIndex == -1 || endTagLineIndex == -1)
     {
         provider.GetRequiredService<ILogger>().LogError("Cannot find the markdown table in README.md");
         return oldReadme;
     }
 
-    int contentStartIndex = startIndex + MarkdownTableStartTag.Length;
-    int contentEndIndex = endIndex;
+    var newLines = new List<string>();
 
-    string updatedMarkdown = oldReadme.Substring(0, contentStartIndex) + "\n"
-        + newTable + "\n"
-        + oldReadme.Substring(contentEndIndex);
+    newLines.AddRange(oldlines.Take(startTagLineIndex + 1));
+    newLines.Add(newTable);
+    newLines.AddRange(oldlines.Skip(endTagLineIndex));
 
-    return updatedMarkdown;
+    return string.Join("\n", newLines);
 }
 
 public static class AssignmentComparer
