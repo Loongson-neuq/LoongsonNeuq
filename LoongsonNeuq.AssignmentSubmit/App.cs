@@ -118,7 +118,10 @@ public class App
         if (_gitHubActions.IsPullRequest)
         {
             _logger.LogInformation("CI triggered by pull request, generating placeholder comment");
-            _pullRequestCommentHandler.AddComment("Grading in progress...").ConfigureAwait(false).GetAwaiter().GetResult();
+            _pullRequestCommentHandler.AddComment("Grading in progress...\n\n" +
+                "Please wait for the grading result. \n\n" +
+                "The grading result will be updated here once it's done.")
+                    .ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
         if (_config.AutoGrade.Enabled)
