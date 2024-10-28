@@ -97,4 +97,7 @@ public class GitHubActions
 
     public string? Workspace
         => Environment.GetEnvironmentVariable("GITHUB_WORKSPACE");
+
+    public bool IsPullRequest
+        => Environment.GetEnvironmentVariable("GITHUB_EVENT_NAME") == "pull_request";
 }
