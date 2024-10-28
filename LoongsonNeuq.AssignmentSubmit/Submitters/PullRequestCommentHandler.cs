@@ -1,5 +1,7 @@
 using System.Text.Json;
 using GitHub;
+using GitHub.Models;
+using LoongsonNeuq.Common.Environments;
 using Microsoft.Extensions.Logging;
 
 namespace LoongsonNeuq.AssignmentSubmit.Submitters;
@@ -9,7 +11,7 @@ public class PullRequestCommentHandler
     private readonly ILogger _logger;
     private readonly GitHubClient _githubClient;
     private readonly GitHubActions _gitHubActions;
-    private int? _commentId;
+    private IssueComment? holderComment;
 
     public PullRequestCommentHandler(ILogger logger, GitHubClient gitHubClient, GitHubActions gitHubActions)
     {
@@ -20,42 +22,39 @@ public class PullRequestCommentHandler
 
     public async Task AddComment(string message)
     {
-        var commentBody = new GitHub.Issues.Item.Comments.CommentsPostRequestBody
+        var commentBody = new GitHub.Repos.Item.Item.Issues.Item.Comments.CommentsPostRequestBody
         {
             Body = message
         };
 
         var splited = _gitHubActions.Repository!.Split('/');
 
-        string owner = splited[0];
-        string repo = splited[1];
+        string owner = _gitHubActions.RepositoryOwnerName!;
+        string repo = _gitHubActions.RepositoryName!;
 
-        string prNumber = Environment.GetEnvironmentVariable("GITHUB_REF").Split('/').Last();
+        string prNumber = _gitHubActions.Ref!.Split('/').Last();
 
-        var comment = await _githubClient.Issues[owner][repo][prNumber].Comments.PostAsync(commentBody).ConfigureAwait(false);
-        _commentId = comment.Id;
+        holderComment = await _githubClient.Repos[owner][repo].Issues[_gitHubActions.PrNumber!.Value]
+            .Comments.PostAsync(commentBody);
     }
 
     public async Task UpdateComment(string message)
     {
-        if (_commentId is null)
+        if (holderComment is null)
         {
-            _logger.LogWarning("No comment ID stored, cannot update comment.");
+            _logger.LogWarning("No comment created, cannot update comment.");
             return;
         }
 
-        var commentBody = new GitHub.Issues.Item.Comments.Item.CommentsPatchRequestBody
+        var commentBody = new GitHub.Repos.Item.Item.Issues.Comments.Item.WithComment_PatchRequestBody
         {
             Body = message
         };
 
-        var splited = _gitHubActions.Repository!.Split('/');
+        string owner = _gitHubActions.RepositoryOwnerName!;
+        string repo = _gitHubActions.RepositoryName!;
 
-        string owner = splited[0];
-        string repo = splited[1];
-
-        string prNumber = Environment.GetEnvironmentVariable("GITHUB_REF").Split('/').Last();
-
-        await _githubClient.Issues[owner][repo][prNumber].Comments[_commentId.Value].PatchAsync(commentBody).ConfigureAwait(false);
+        await _githubClient.Repos[owner][repo].Issues.Comments[holderComment.Id!.Value]
+            .PatchAsync(commentBody);
     }
 }
