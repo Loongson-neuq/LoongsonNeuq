@@ -115,6 +115,7 @@ public class App
             return fill;
         }
 
+        // This requires you enable Pull request in the workflow file
         if (_gitHubActions.IsPullRequest)
         {
             _logger.LogInformation("CI triggered by pull request, generating placeholder comment");
