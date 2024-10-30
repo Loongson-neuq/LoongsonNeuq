@@ -22,6 +22,7 @@ services.AddTransient<GradingRunner>();
 services.AddSingleton<GitHubActions>();
 services.AddSingleton<App>();
 services.AddSingleton<WebCommitChecker>();
+services.AddSingleton<PullRequestCommentHandler>(); // Register the PullRequestCommentHandler dependency
 
 if (args.Any(arg => arg is "--debug" or "-d"))
 {
