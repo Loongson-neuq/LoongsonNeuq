@@ -182,6 +182,9 @@ public class App
         if (repo.Fork is true)
             return false;
 
+        if (_gitHubActions.EventName == "pull_request")
+            return true;
+
         _logger.LogWarning("Unknown repo type, bypassing web action check");
         return false;
     }
