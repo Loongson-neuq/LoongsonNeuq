@@ -19,7 +19,7 @@ public class GitHubActions
         => Environment.GetEnvironmentVariable("GITHUB_ACTOR_ID");
 
     public string? ActionPath
-        => Environment.GetEnvironmentVariable("GITHUB_ACTION_PATH");    
+        => Environment.GetEnvironmentVariable("GITHUB_ACTION_PATH");
 
     public string? ActionRepository
         => Environment.GetEnvironmentVariable("GITHUB_ACTION_REPOSITORY");
@@ -31,7 +31,7 @@ public class GitHubActions
         => Environment.GetEnvironmentVariable("GITHUB_EVENT_NAME");
 
     public string? StepPath
-        =>  Environment.GetEnvironmentVariable("GITHUB_ENV");
+        => Environment.GetEnvironmentVariable("GITHUB_ENV");
 
     public string? HeadRef
         => Environment.GetEnvironmentVariable("GITHUB_HEAD_REF");
@@ -97,4 +97,13 @@ public class GitHubActions
 
     public string? Workspace
         => Environment.GetEnvironmentVariable("GITHUB_WORKSPACE");
+
+    public bool IsPullRequest
+        => Environment.GetEnvironmentVariable("GITHUB_EVENT_NAME") == "pull_request";
+
+    // FIXME: This is not correct, the format is 'refs/pull/<pr_number>/merge'
+    public int? PrNumber => !IsPullRequest ? null : int.TryParse(Ref!.Split('/').Last(), out var number) ? number : null;
+
+    public string RepositoryOwnerName => Repository!.Split('/').First();
+    public string RepositoryName => Repository!.Split('/').Last();
 }

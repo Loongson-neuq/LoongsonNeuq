@@ -23,9 +23,10 @@ public class App
     private readonly ResultSubmitter _resultSubmitter;
     private readonly WebCommitChecker _webCommitChecker;
     private readonly GitHubClient _gitHubClient;
+    private readonly PullRequestCommentHandler _pullRequestCommentHandler;
     private SubmitPayload submitPayload = new SubmitPayload();
 
-    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker, GitHubClient gitHubClient)
+    public App(ILogger logger, AssignmentConfig config, GitHubActions gitHubActions, GradingRunner gradingRunner, ResultSubmitter resultSubmitter, WebCommitChecker webCommitChecker, GitHubClient gitHubClient, PullRequestCommentHandler pullRequestCommentHandler)
     {
         _logger = logger;
         _config = config;
@@ -34,6 +35,7 @@ public class App
         _resultSubmitter = resultSubmitter;
         _webCommitChecker = webCommitChecker;
         _gitHubClient = gitHubClient;
+        _pullRequestCommentHandler = pullRequestCommentHandler;
 
         BypassSubmit = new(() => ShouldBypassSubmit());
     }
@@ -113,6 +115,16 @@ public class App
             return fill;
         }
 
+        // This requires you enable Pull request in the workflow file
+        if (_gitHubActions.IsPullRequest)
+        {
+            _logger.LogInformation("CI triggered by pull request, generating placeholder comment");
+            _pullRequestCommentHandler.AddComment("Grading in progress...\n\n" +
+                "Please wait for the grading result. \n\n" +
+                "The grading result will be updated here once it's done.")
+                    .ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
         if (_config.AutoGrade.Enabled)
         {
             _logger.LogInformation("Auto grading enabled, Starting auto grading");
@@ -171,7 +183,7 @@ public class App
         }
 
         if (repo.TemplateRepository is null)
-            return true;
+            return false;
 
         if (repo.TemplateRepository.FullName == "Loongson-neuq/AssignmentTemplate")
             return true;
@@ -179,13 +191,10 @@ public class App
         if (repo.IsTemplate is true)
             return true;
 
-        if (repo.Fork is true)
-            return false;
-
-        if (_gitHubActions.EventName == "pull_request")
+        if (repo.Fork is false)
             return true;
 
-        _logger.LogWarning("Unknown repo type, bypassing web action check");
+        // _logger.LogWarning("Unknown repo type, bypassing web action check");
         return false;
     }
 }
