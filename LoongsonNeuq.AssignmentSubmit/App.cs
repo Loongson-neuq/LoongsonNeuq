@@ -97,13 +97,13 @@ public class App
 
         GitHelper.InitCurrentRepoWithDefault();
 
-        if (_webCommitChecker.CheckCommit(new CommitDescriptor(
-            _gitHubActions.Repository!,
-            _gitHubActions.Sha!)))
-        {
-            _logger.LogError("Nothing will be submitted");
-            return ExitCode.WebActionDenied;
-        }
+        // if (_webCommitChecker.CheckCommit(new CommitDescriptor(
+        //     _gitHubActions.Repository!,
+        //     _gitHubActions.Sha!)))
+        // {
+        //     _logger.LogError("Nothing will be submitted");
+        //     return ExitCode.WebActionDenied;
+        // }
 
         var fill = fillSubmitPayload();
 
@@ -181,9 +181,6 @@ public class App
 
         if (repo.Fork is true)
             return false;
-
-        if (_gitHubActions.EventName == "pull_request")
-            return true;
 
         _logger.LogWarning("Unknown repo type, bypassing web action check");
         return false;
