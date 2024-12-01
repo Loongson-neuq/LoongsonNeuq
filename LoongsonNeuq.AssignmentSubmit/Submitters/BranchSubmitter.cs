@@ -16,6 +16,7 @@ public class BranchSubmitter : ResultSubmitter
     private readonly ILogger _logger;
     private readonly GitHubActions _gitHubActions;
     private readonly GitHubClient _githubClient;
+    private readonly PullRequestCommentHandler _pullRequestCommentHandler;
 
     private readonly string? remoteUrl;
 
@@ -26,11 +27,12 @@ public class BranchSubmitter : ResultSubmitter
     public virtual string? GitHubBranchUrl => remoteUrl is not null ? Path.Combine(remoteUrl, "tree", BranchName)
         : null;
 
-    public BranchSubmitter(ILogger logger, GitHubActions gitHubActions, GitHubClient gitHubClient)
+    public BranchSubmitter(ILogger logger, GitHubActions gitHubActions, GitHubClient gitHubClient, PullRequestCommentHandler pullRequestCommentHandler)
     {
         _logger = logger;
         _gitHubActions = gitHubActions;
         _githubClient = gitHubClient;
+        _pullRequestCommentHandler = pullRequestCommentHandler;
 
         remoteUrl = _gitHubActions.Repository is null
             ? null
@@ -415,6 +417,11 @@ public class BranchSubmitter : ResultSubmitter
                     }
 
                     CommentOnCommit(builder.ToString());
+
+                    if (_gitHubActions.IsPullRequest)
+                    {
+                        _pullRequestCommentHandler.UpdateComment(builder.ToString()).ConfigureAwait(false).GetAwaiter().GetResult();
+                    }
                 }
             }
         }
