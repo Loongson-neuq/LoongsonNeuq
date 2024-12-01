@@ -99,13 +99,13 @@ public class App
 
         GitHelper.InitCurrentRepoWithDefault();
 
-        if (_webCommitChecker.CheckCommit(new CommitDescriptor(
-            _gitHubActions.Repository!,
-            _gitHubActions.Sha!)))
-        {
-            _logger.LogError("Nothing will be submitted");
-            return ExitCode.WebActionDenied;
-        }
+        // if (_webCommitChecker.CheckCommit(new CommitDescriptor(
+        //     _gitHubActions.Repository!,
+        //     _gitHubActions.Sha!)))
+        // {
+        //     _logger.LogError("Nothing will be submitted");
+        //     return ExitCode.WebActionDenied;
+        // }
 
         var fill = fillSubmitPayload();
 
